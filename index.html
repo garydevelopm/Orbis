@@ -2,50 +2,33 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ORBIS · Simulador 3D de sitios análogos</title>
+<meta name="theme-color" content="#050607">
 <link rel="stylesheet" href="estilos.css">
 </head>
 <body>
 <div id="globo"></div>
-<svg id="linea"><path id="trazo" d="" fill="none" stroke="#f1f2f3" stroke-width="1" opacity="0"></path><circle id="ancla" r="3" fill="#f1f2f3" opacity="0"></circle></svg>
+<svg id="linea"><path id="trazo" d="" fill="none" stroke="#ffffff" stroke-width="1" opacity="0"></path><circle id="ancla" r="3" fill="#ffffff" opacity="0"></circle></svg>
 
 <header id="superior">
-  <h1>ORBIS</h1>
-  <div class="sub">SIMULADOR 3D DE SITIOS ANÁLOGOS PARA LA LUNA Y MARTE</div>
-  <div id="tabs">
-    <div class="tab activa" data-f="Todos">TODOS</div>
-    <div class="tab" data-f="Marte">MARTE</div>
-    <div class="tab" data-f="Luna">LUNA</div>
-  </div>
+  <div class="marca-orbis">ORBIS</div>
+  <nav id="menu">
+    <button class="item" data-v="lugares">Sitios análogos</button>
+    <button class="item" data-v="mision" id="itemMision">Misión</button>
+    <button class="item" data-v="acerca">Acerca de</button>
+  </nav>
+  <button id="burger" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
 </header>
 
-<aside id="izq" class="col">
-  <section class="panel" style="flex:1; min-height:0; display:flex; flex-direction:column;">
-    <div class="ptit">Ranking de similitud</div>
-    <div id="resumen"></div>
-    <div id="cats"></div>
-    <div id="lista"></div>
-    <div class="leyenda">
-      <span><i class="punto" style="background:#f1f2f3"></i>Marte</span>
-      <span><i class="punto hueco"></i>Luna</span>
-      <span class="nota">Tamaño = similitud</span>
-    </div>
-  </section>
-</aside>
+<section id="ventana" class="oculta"></section>
+<aside id="ficha" class="oculta"></aside>
 
-<aside id="der" class="col">
-  <section class="panel" id="detalle" style="flex:1; min-height:0;"></section>
-</aside>
+<button id="rotacion" title="Pausar rotación" aria-label="Pausar o reanudar la rotación del planeta"></button>
 
-<nav id="mision">
-  <div class="etiqueta">¿QUÉ QUIERES PROBAR?</div>
-  <div id="botones"></div>
-  <div id="textomision"></div>
-</nav>
-
+<div id="pista">Toca un punto del planeta para ver su ficha</div>
 <div id="alt"></div>
-<div id="aviso">DATOS DE PRUEBA · NO SON RESULTADOS CIENTÍFICOS</div>
+<div id="aviso">DATOS DE PRUEBA</div>
 
 <script src="lib/globe.gl.min.js"></script>
 <script src="datos/lugares.js"></script>
