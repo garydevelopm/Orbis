@@ -424,7 +424,7 @@ function vistasSitio(d) {
   var satelitales = CONFIG.vistas.map(function (v) {
     return { url: urlFoto(d, v.metros), urlGrande: urlFoto(d, v.metros, 1600, 1000), etiqueta: v.etiqueta, credito: CONFIG.foto.credito };
   });
-  return propias.concat(satelitales);
+  return propias.length ? propias : propias.concat(satelitales);
 }
 
 function indiceBanner(d) {
