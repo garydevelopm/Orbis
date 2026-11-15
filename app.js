@@ -882,7 +882,7 @@ function salirComparacion() {
 
 function ajustarGiro() {
   var d = mundo.camera().position.length();
-  mundo.controls().rotateSpeed = Math.max(0.03, Math.min(1, (d - 100) / 200));
+  var x = Math.max(0, d - 100);   mundo.controls().rotateSpeed = Math.max(0.0004, Math.min(1, 0.0017 * x * (1 + x / 20)));
 }
 
 var mundo = Globe()(document.getElementById("globo"))
@@ -935,7 +935,7 @@ function detenerZoom() {
 }
 
 function centroZoom() {
-  if (seleccionado && !comparando) { return { lat: seleccionado.lat, lng: seleccionado.lon }; }
+  if (seleccionado && !comparando && fijarSitio) { return { lat: seleccionado.lat, lng: seleccionado.lon }; }
   var v = mundo.pointOfView();
   return { lat: v.lat, lng: v.lng };
 }
