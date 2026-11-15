@@ -9,12 +9,30 @@
   #linea { position: absolute; left: 0; top: 0; width: 100%; height: 100%; z-index: 4; pointer-events: none; }
   .oculta { display: none !important; }
 
-  #superior { position: absolute; top: 0; left: 0; right: 0; height: 64px; z-index: 8; display: flex; align-items: center; padding: 0 28px; gap: 36px; background: linear-gradient(180deg, rgba(5,6,7,0.85), rgba(5,6,7,0)); }
-  .marca-orbis { font-size: 16px; letter-spacing: 7px; color: var(--blanco); font-weight: 600; }
-  #menu { margin-left: auto; display: flex; gap: 6px; }
+  :root { --sombra: 0 0 2px #000, 0 0 6px #000, 0 1px 12px #000, 0 0 24px rgba(0,0,0,0.9); }
+  #superior { position: absolute; top: 0; left: 0; right: 0; height: 64px; z-index: 8; display: flex; align-items: center; padding: 0 28px; background: linear-gradient(180deg, rgba(5,6,7,0.85), rgba(5,6,7,0)); pointer-events: none; }
+  .marca-orbis { font-size: 21px; letter-spacing: 9px; color: var(--blanco); font-weight: 600; text-shadow: var(--sombra); }
+  #barra { position: absolute; top: 0; left: 50%; transform: translateX(-50%); z-index: 9; height: 54px; display: flex; align-items: flex-start; justify-content: center; pointer-events: none; }
+  #tri { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 46px; height: 30px; display: flex; align-items: center; justify-content: center; background: none; border: 0; color: var(--suave); opacity: 0.55; pointer-events: auto; transition: opacity .25s, color .25s; filter: drop-shadow(0 0 4px #000); }
+  #tri:hover, #tri:focus-visible { opacity: 1; color: var(--blanco); }
+  #barra.abierto #tri { opacity: 0; pointer-events: none; }
+  #menu { display: flex; align-items: center; gap: 4px; padding: 4px 8px; margin-top: 8px; background: rgba(10,11,13,0.82); border: 1px solid var(--linea); border-radius: 26px; opacity: 0; transform: translateY(-12px); pointer-events: none; transition: opacity .22s, transform .22s; white-space: nowrap; }
+  #barra.abierto #menu { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .item { background: none; border: 0; padding: 10px 16px; font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--suave); border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
   .item:hover { color: var(--blanco); }
   .item.activa { color: var(--blanco); border-bottom-color: var(--blanco); }
+  .item-ayuda { width: 34px; height: 34px; padding: 0; margin-left: 4px; border: 1px solid var(--linea); border-radius: 50%; font-size: 15px; letter-spacing: 0; text-transform: none; display: flex; align-items: center; justify-content: center; }
+  .item-ayuda.activa { border-bottom-color: var(--blanco); border-color: var(--blanco); }
+  #fueravista { position: absolute; z-index: 6; top: 72px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 9px 18px; background: rgba(10,11,13,0.78); border: 1px solid var(--linea); border-radius: 22px; color: var(--blanco); animation: entrar .2s ease-out; }
+  #fueravista span { font-size: 12px; letter-spacing: 2.5px; text-transform: uppercase; text-shadow: var(--sombra); }
+  #fueravista small { font-size: 10px; letter-spacing: 1.5px; color: var(--suave); }
+  #fueravista:hover { border-color: rgba(255,255,255,0.5); }
+  #zoom { position: absolute; z-index: 6; left: 28px; bottom: 80px; display: flex; flex-direction: column; border: 1px solid var(--linea); border-radius: 20px; background: rgba(10,11,13,0.55); overflow: hidden; }
+  #zoom button { position: relative; width: 40px; height: 38px; background: none; border: 0; color: var(--suave); transition: color .2s, background .2s; }
+  #zoom button + button { border-top: 1px solid var(--linea); }
+  #zoom button:hover { color: var(--blanco); background: rgba(255,255,255,0.06); }
+  #zoom span { position: absolute; left: 50%; top: 50%; width: 12px; height: 1.5px; margin: -0.75px 0 0 -6px; background: currentColor; }
+  #zoom #zmas span:last-child { transform: rotate(90deg); }
 
   #ventana { position: absolute; z-index: 7; background: rgba(12,13,15,0.95); border: 1px solid var(--linea); max-height: calc(100vh - 150px); overflow: auto; padding: 22px 24px 24px; animation: entrar .18s ease-out; }
   #ventana.menu { top: 68px; left: 50%; transform: translateX(-50%); width: 520px; max-width: calc(100vw - 40px); }
@@ -162,10 +180,15 @@
 
   #rotacion { position: absolute; z-index: 6; left: 28px; bottom: 28px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--linea); background: rgba(10,11,13,0.55); color: var(--suave); display: flex; align-items: center; justify-content: center; transition: all .2s; }
   #rotacion:hover { color: var(--blanco); border-color: rgba(255,255,255,0.5); }
-  #pista { position: absolute; z-index: 5; left: 50%; bottom: 56px; transform: translateX(-50%); font-size: 12px; letter-spacing: 1.5px; color: var(--suave); transition: opacity .8s; text-shadow: 0 0 8px #000; white-space: nowrap; }
+
+  .bajar { position: fixed; z-index: 8; height: 54px; display: none; align-items: flex-end; justify-content: center; padding: 0 0 6px; border: 0; background: linear-gradient(0deg, rgba(12,13,15,0.98) 25%, rgba(12,13,15,0)); color: var(--suave); }
+  .bajar:hover, .bajar:focus-visible { color: var(--blanco); }
+  .bajar svg { animation: rebote 1.6s ease-in-out infinite; }
+  @keyframes rebote { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
+  #pista { position: absolute; z-index: 5; left: 50%; bottom: 56px; transform: translateX(-50%); font-size: 12px; letter-spacing: 1.5px; color: var(--texto); transition: opacity .8s; text-shadow: var(--sombra); white-space: nowrap; }
   #pista.fuera { opacity: 0; pointer-events: none; }
-  #alt { position: absolute; bottom: 14px; right: 28px; font-size: 10px; letter-spacing: 2px; color: var(--tenue); z-index: 6; white-space: nowrap; }
-  #aviso { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 10px; letter-spacing: 3px; color: var(--tenue); z-index: 6; white-space: nowrap; }
+  #alt { position: absolute; bottom: 14px; right: 28px; font-size: 10px; letter-spacing: 2px; color: var(--suave); text-shadow: var(--sombra); z-index: 6; white-space: nowrap; }
+  #aviso { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 10px; letter-spacing: 3px; color: var(--suave); text-shadow: var(--sombra); z-index: 6; white-space: nowrap; }
 
   .marca { position: relative; border-radius: 50%; cursor: pointer; transform: translate(-50%, -50%); transition: width .25s, height .25s; }
   .marca::before { content: ""; position: absolute; inset: -7px; border-radius: 50%; }
@@ -178,26 +201,15 @@
   .marca.luna.sel::before { border-color: var(--azul); }
   @keyframes onda { from { transform: scale(1); opacity: 0.9; } to { transform: scale(2.4); opacity: 0; } }
 
-  #burger { display: none; margin-left: auto; width: 44px; height: 44px; background: none; border: 0; flex-direction: column; justify-content: center; align-items: center; gap: 5px; padding: 0; }
-  #burger span { display: block; width: 20px; height: 1.5px; background: var(--blanco); transition: transform .2s, opacity .2s; }
-  #burger[aria-expanded="true"] span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
-  #burger[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-  #burger[aria-expanded="true"] span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
-
   @media (max-width: 1100px) {
     .tarjetas { grid-template-columns: repeat(3, 1fr); }
     .tarjetas.cuatro { grid-template-columns: repeat(2, 1fr); }
     .item { padding: 10px 10px; letter-spacing: 2px; }
-    #superior { gap: 20px; }
   }
 
   @media (max-width: 900px) {
-    #superior { padding: 0 8px 0 18px; }
-    #burger { display: flex; }
-    #menu { display: none; position: absolute; top: 56px; right: 10px; flex-direction: column; gap: 0; min-width: 230px; padding: 6px; background: rgba(12,13,15,0.97); border: 1px solid var(--linea); }
-    #menu.abierto { display: flex; animation: entrar .15s ease-out; }
-    .item { text-align: left; padding: 14px 16px; border-bottom: 0; border-left: 2px solid transparent; letter-spacing: 2px; }
-    .item.activa { border-left-color: var(--blanco); }
+    #superior { padding: 0 18px; }
+    .item { padding: 10px 8px; letter-spacing: 1.6px; font-size: 11px; }
     #ventana.menu { width: min(640px, calc(100vw - 24px)); }
     #ventana.ancho { width: min(860px, calc(100vw - 24px)); }
     #ficha { width: 300px; right: 12px; }
@@ -208,7 +220,15 @@
 
   @media (max-width: 700px) {
     #superior { height: 56px; }
-    .marca-orbis { font-size: 14px; letter-spacing: 6px; }
+    .marca-orbis { font-size: 17px; letter-spacing: 7px; }
+    #menu { flex-direction: column; align-items: stretch; gap: 0; min-width: 230px; padding: 6px; border-radius: 14px; margin-top: 4px; }
+    #barra { top: 4px; left: auto; right: 6px; transform: none; width: 56px; }
+    #menu { position: absolute; top: 46px; right: 0; background: rgba(10,11,13,0.97); margin-top: 0; }
+    .item { text-align: left; padding: 14px 16px; letter-spacing: 2px; font-size: 12px; }
+    .item-ayuda { width: 44px; height: 44px; margin: 4px 0 0 auto; }
+    #zoom { left: auto; right: 16px; bottom: calc(26px + env(safe-area-inset-bottom)); }
+    body.con-ficha #zoom { display: none; }
+    #fueravista { top: 64px; }
     #ventana, #ventana.menu, #ventana.ancho { top: 56px; left: 0; right: 0; bottom: 0; transform: none; width: 100%; max-width: none; max-height: none; border-width: 1px 0 0 0; padding: 18px 16px calc(28px + env(safe-area-inset-bottom)); overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
     .texto, .pasos { font-size: 15px; }
     table { font-size: 12px; }
@@ -258,7 +278,6 @@
 
   @media (max-height: 520px) and (min-width: 701px) {
     #superior { height: 52px; }
-    #menu { top: 50px; }
     #ventana { max-height: calc(100vh - 64px); max-height: calc(100dvh - 64px); }
     #ventana.menu { top: 56px; }
     #ficha { top: 58px; right: 12px; max-height: calc(100vh - 70px); max-height: calc(100dvh - 70px); }
@@ -267,6 +286,7 @@
     .tarjetas.cuatro { grid-template-columns: repeat(2, 1fr); }
     #pista { display: none; }
     #rotacion { bottom: 12px; }
+    #zoom { bottom: 64px; }
     body.con-ficha #alt, body.con-ficha #aviso { display: none; }
   }
 
@@ -276,6 +296,8 @@
     .cerrar { padding: 10px 12px; font-size: 22px; }
     .chip, .acc, .item { min-height: 44px; }
     #rotacion { width: 46px; height: 46px; }
+    #zoom button { width: 46px; height: 44px; }
+    #tri { width: 56px; height: 40px; top: 6px; }
     .deslizador { min-height: 44px; }
     .deslizador input { height: 4px; }
     .deslizador input::-webkit-slider-thumb { width: 26px; height: 26px; }

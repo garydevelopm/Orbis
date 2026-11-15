@@ -13,14 +13,24 @@
 
 <header id="superior">
   <div class="marca-orbis">ORBIS</div>
-  <nav id="menu">
-    <button class="item" data-v="lugares">Sitios análogos</button>
+</header>
+
+<div id="barra">
+  <button id="tri" aria-label="Mostrar menú" aria-expanded="false" aria-controls="menu"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M5 8 L12 17 L19 8 Z" fill="currentColor"></path></svg></button>
+  <nav id="menu" aria-label="Menú principal">
     <button class="item" data-v="mision" id="itemMision">Misión</button>
     <button class="item" data-v="objetivo" id="itemObjetivo">Objetivo</button>
-    <button class="item" data-v="acerca">Acerca de</button>
+    <button class="item" data-v="lugares">Sitios análogos</button>
+    <button class="item item-ayuda" data-v="acerca" aria-label="Acerca de ORBIS" title="Acerca de ORBIS">?</button>
   </nav>
-  <button id="burger" aria-label="Abrir menú" aria-expanded="false"><span></span><span></span><span></span></button>
-</header>
+</div>
+
+<button id="fueravista" class="oculta" aria-live="polite"><span>Punto no visible</span><small>Toca para centrarlo</small></button>
+
+<div id="zoom" role="group" aria-label="Zoom del globo">
+  <button id="zmas" aria-label="Acercar"><span></span><span></span></button>
+  <button id="zmenos" aria-label="Alejar"><span></span></button>
+</div>
 
 <section id="ventana" class="oculta"></section>
 <aside id="ficha" class="oculta"></aside>

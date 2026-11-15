@@ -569,6 +569,8 @@ function alternarRotacion() {
   iconoRotacion();
 }
 
+var ignorarAvisoHasta = 0;
+
 function elegir(d, mover) {
   cerrarVisor();
   seleccionado = d;
@@ -577,6 +579,8 @@ function elegir(d, mover) {
   pintarGaleria();
   mundo.controls().autoRotate = false;
   if (ventanaActual) { cerrarVentana(); }
+  detenerZoom();
+  ignorarAvisoHasta = Date.now() + (CONFIG.duracionZoom || 1500) + 300;
   if (mover) { mundo.pointOfView({ lat: d.lat, lng: d.lon, altitude: CONFIG.altitudZoom }, CONFIG.duracionZoom || 1500); }
   pintarMarcas();
   pintarFicha();
@@ -585,12 +589,15 @@ function elegir(d, mover) {
 function acercar() {
   if (!seleccionado) { return; }
   mundo.controls().autoRotate = false;
+  detenerZoom();
+  ignorarAvisoHasta = Date.now() + 2300;
   mundo.pointOfView({ lat: seleccionado.lat, lng: seleccionado.lon, altitude: CONFIG.altitudSitio }, 2000);
   galeriaVisible = true;
   pintarGaleria();
 }
 
 function volver() {
+  detenerZoom();
   cerrarVisor();
   var lon = seleccionado ? seleccionado.lon : CONFIG.vistaInicial.lng;
   seleccionado = null;
@@ -676,20 +683,40 @@ activarMosaico();
 var altitudMeta = 1;
 var altitudActual = 1;
 var animandoZoom = false;
+var idZoom = 0;
+
+function detenerZoom() {
+  cancelAnimationFrame(idZoom);
+  animandoZoom = false;
+}
+
+function centroZoom() {
+  if (seleccionado) { return { lat: seleccionado.lat, lng: seleccionado.lon }; }
+  var v = mundo.pointOfView();
+  return { lat: v.lat, lng: v.lng };
+}
 
 function pasoZoom() {
-  if (!seleccionado) { animandoZoom = false; return; }
   var dif = altitudMeta - altitudActual;
+  var centro = centroZoom();
   if (Math.abs(dif) < altitudActual * 0.002) {
     altitudActual = altitudMeta;
-    mundo.pointOfView({ lat: seleccionado.lat, lng: seleccionado.lon, altitude: altitudActual }, 0);
+    mundo.pointOfView({ lat: centro.lat, lng: centro.lng, altitude: altitudActual }, 0);
     animandoZoom = false;
     return;
   }
   altitudActual += dif * 0.18;
-  mundo.pointOfView({ lat: seleccionado.lat, lng: seleccionado.lon, altitude: altitudActual }, 0);
-  requestAnimationFrame(pasoZoom);
+  mundo.pointOfView({ lat: centro.lat, lng: centro.lng, altitude: altitudActual }, 0);
+  idZoom = requestAnimationFrame(pasoZoom);
 }
+
+function zoomBoton(factor) {
+  if (!animandoZoom) { altitudActual = mundo.pointOfView().altitude; altitudMeta = altitudActual; }
+  altitudMeta = Math.max(0.015, Math.min(4, altitudMeta * factor));
+  if (!animandoZoom) { animandoZoom = true; idZoom = requestAnimationFrame(pasoZoom); }
+}
+document.getElementById("zmas").onclick = function () { zoomBoton(0.55); };
+document.getElementById("zmenos").onclick = function () { zoomBoton(1 / 0.55); };
 
 document.getElementById("globo").addEventListener("wheel", function (e) {
   if (!seleccionado) { return; }
@@ -697,22 +724,57 @@ document.getElementById("globo").addEventListener("wheel", function (e) {
   e.stopPropagation();
   if (!animandoZoom) { altitudActual = mundo.pointOfView().altitude; altitudMeta = altitudActual; }
   altitudMeta = Math.max(0.015, Math.min(3, altitudMeta * Math.exp(e.deltaY * 0.0015)));
-  if (!animandoZoom) { animandoZoom = true; requestAnimationFrame(pasoZoom); }
+  if (!animandoZoom) { animandoZoom = true; idZoom = requestAnimationFrame(pasoZoom); }
 }, { passive: false, capture: true });
 
 document.querySelectorAll(".item").forEach(function (b) {
   b.onclick = function () { cerrarMenuMovil(); abrirVentana(b.getAttribute("data-v")); };
 });
 
-function cerrarMenuMovil() {
-  document.getElementById("menu").classList.remove("abierto");
-  document.getElementById("burger").setAttribute("aria-expanded", "false");
+var barra = document.getElementById("barra");
+var triangulo = document.getElementById("tri");
+var temporizadorMenu = null;
+
+function abrirMenu() {
+  clearTimeout(temporizadorMenu);
+  barra.classList.add("abierto");
+  triangulo.setAttribute("aria-expanded", "true");
 }
-document.getElementById("burger").onclick = function () {
-  var abierto = document.getElementById("menu").classList.toggle("abierto");
-  this.setAttribute("aria-expanded", abierto ? "true" : "false");
-};
+
+function cerrarMenuMovil() {
+  clearTimeout(temporizadorMenu);
+  barra.classList.remove("abierto");
+  triangulo.setAttribute("aria-expanded", "false");
+}
+
+function cerrarMenuLuego() {
+  clearTimeout(temporizadorMenu);
+  temporizadorMenu = setTimeout(cerrarMenuMovil, 350);
+}
+
+[triangulo, document.getElementById("menu")].forEach(function (el) {
+  el.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { abrirMenu(); } });
+  el.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") { cerrarMenuLuego(); } });
+});
+triangulo.addEventListener("click", function () {
+  if (barra.classList.contains("abierto")) { cerrarMenuMovil(); } else { abrirMenu(); }
+});
+triangulo.addEventListener("focus", abrirMenu);
+document.getElementById("menu").addEventListener("focusout", function (e) {
+  if (!this.contains(e.relatedTarget)) { cerrarMenuLuego(); }
+});
+document.addEventListener("pointerdown", function (e) {
+  if (barra.classList.contains("abierto") && !e.target.closest("#barra")) { cerrarMenuMovil(); }
+});
 document.getElementById("rotacion").onclick = alternarRotacion;
+document.getElementById("fueravista").onclick = function () {
+  if (!seleccionado) { return; }
+  var v = mundo.pointOfView();
+  mundo.controls().autoRotate = false;
+  detenerZoom();
+  ignorarAvisoHasta = Date.now() + 1200;
+  mundo.pointOfView({ lat: seleccionado.lat, lng: seleccionado.lon, altitude: v.altitude }, 1000);
+};
 
 document.getElementById("ventana").addEventListener("click", function (e) {
   var b = e.target.closest("[data-accion]");
@@ -780,6 +842,7 @@ document.addEventListener("keydown", function (e) {
     return;
   }
   if (e.key === "Escape") {
+    if (barra.classList.contains("abierto")) { cerrarMenuMovil(); return; }
     if (ventanaActual) { cerrarVentana(); } else if (seleccionado) { volver(); }
     return;
   }
@@ -801,11 +864,71 @@ function ocultarPista() {
 document.addEventListener("pointerdown", ocultarPista, { once: true });
 setTimeout(ocultarPista, 9000);
 
+
+var paneles = ["ventana", "ficha", "galeria"].map(function (id) {
+  var panel = document.getElementById(id);
+  var boton = document.createElement("button");
+  boton.className = "bajar";
+  boton.setAttribute("aria-label", "Deslizar hacia abajo");
+  boton.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M5 8 L12 17 L19 8 Z" fill="currentColor"></path></svg>';
+  document.body.appendChild(boton);
+  var estado = { panel: panel, boton: boton, bajando: false, ultimo: 0 };
+
+  function paso(t) {
+    if (!estado.bajando) { return; }
+    var dt = Math.min(50, t - estado.ultimo);
+    estado.ultimo = t;
+    panel.scrollTop += 0.26 * dt;
+    requestAnimationFrame(paso);
+  }
+  function empezar() {
+    if (estado.bajando) { return; }
+    estado.bajando = true;
+    estado.ultimo = performance.now();
+    requestAnimationFrame(paso);
+  }
+  function parar() { estado.bajando = false; }
+  boton.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") { empezar(); } });
+  boton.addEventListener("pointerleave", parar);
+  boton.addEventListener("click", function (e) {
+    if (e.pointerType !== "mouse") { panel.scrollBy({ top: panel.clientHeight * 0.7, behavior: "smooth" }); }
+  });
+  return estado;
+});
+
+function actualizarBajar() {
+  paneles.forEach(function (e) {
+    var p = e.panel;
+    var falta = p.scrollHeight - p.clientHeight - p.scrollTop;
+    var mostrar = !p.classList.contains("oculta") && falta > 6;
+    if (!mostrar) { e.bajando = false; if (e.boton.style.display !== "none") { e.boton.style.display = "none"; } return; }
+    var r = p.getBoundingClientRect();
+    var s = e.boton.style;
+    s.display = "flex";
+    s.left = (r.left + 1) + "px";
+    s.width = (r.width - 2) + "px";
+    s.top = (r.bottom - 55) + "px";
+  });
+}
+
+function puntoVisible() {
+  var c = mundo.getCoords(seleccionado.lat, seleccionado.lon, 0);
+  var cam = mundo.camera().position;
+  var dentro = (cam.x * c.x + cam.y * c.y + cam.z * c.z) > (c.x * c.x + c.y * c.y + c.z * c.z) * 1.002;
+  if (!dentro) { return false; }
+  var p = mundo.getScreenCoords(seleccionado.lat, seleccionado.lon, 0.004);
+  return !!p && p.x > -20 && p.x < window.innerWidth + 20 && p.y > -20 && p.y < window.innerHeight + 20;
+}
+
 function seguir() {
+  actualizarBajar();
   var trazo = document.getElementById("trazo");
   var ancla = document.getElementById("ancla");
   var ficha = document.getElementById("ficha");
-  if (seleccionado && !ficha.classList.contains("oculta")) {
+  var aviso = document.getElementById("fueravista");
+  var visible = !seleccionado || Date.now() < ignorarAvisoHasta || puntoVisible();
+  aviso.classList.toggle("oculta", visible);
+  if (seleccionado && visible && !ficha.classList.contains("oculta")) {
     var p = mundo.getScreenCoords(seleccionado.lat, seleccionado.lon, 0.004);
     if (p && p.x !== undefined) {
       var x = p.x, y = p.y;
@@ -871,3 +994,5 @@ fetch("datos/lugares.csv")
   .then(function (r) { if (!r.ok) { throw new Error("sin csv"); } return r.text(); })
   .then(function (t) { var datos = leerCsv(t); if (datos.length) { todos = datos; } iniciar(); })
   .catch(function () { iniciar(); });
+
+document.getElementById("globo").addEventListener("pointerdown", detenerZoom);
