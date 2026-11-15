@@ -9,6 +9,9 @@
 </head>
 <body>
 <div id="globo"></div>
+<div id="globo2"></div>
+<div id="etq1" class="etqglobo"></div>
+<div id="etq2" class="etqglobo"></div>
 <svg id="linea"><path id="trazo" d="" fill="none" stroke="#ffffff" stroke-width="1" opacity="0"></path><circle id="ancla" r="3" fill="#ffffff" opacity="0"></circle></svg>
 
 <header id="superior">
@@ -34,6 +37,9 @@
 
 <section id="ventana" class="oculta"></section>
 <aside id="ficha" class="oculta"></aside>
+<aside id="ficha2" class="oculta"></aside>
+<div id="tabscomp"><button id="tab1">Tierra</button><button id="tab2">Marte</button></div>
+<button id="salircomp">✕ Cerrar comparación</button>
 <aside id="galeria" class="oculta"></aside>
 <div id="visor" class="oculta" role="dialog" aria-modal="true" aria-label="Imagen ampliada">
   <button class="vcerrar" data-accion="visor-cerrar" aria-label="Cerrar imagen">✕</button>
@@ -43,6 +49,11 @@
 </div>
 
 <button id="rotacion" title="Pausar rotación" aria-label="Pausar o reanudar la rotación del planeta"></button>
+<div id="cuerpos" role="group" aria-label="Cambiar de planeta">
+  <button data-c="tierra" title="Tierra" aria-label="Ver la Tierra"><i class="esfera tierra"></i></button>
+  <button data-c="marte" title="Marte" aria-label="Ver Marte"><i class="esfera marte"></i></button>
+  <button data-c="luna" title="Luna" aria-label="Ver la Luna"><i class="esfera luna"></i></button>
+</div>
 
 
 
@@ -52,6 +63,7 @@
 
 <script src="lib/globe.gl.min.js"></script>
 <script src="datos/lugares.js"></script>
+<script src="datos/contrapartes.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
