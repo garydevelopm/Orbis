@@ -426,3 +426,12 @@
   #tip-prueba .tp-mini.esta s { background: #ff7a73; }
   #tip-prueba .tp-clic { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--linea); font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; color: #ffb4af; }
   #tip-prueba .tp-nota { margin-top: 6px; font-size: 9px; color: var(--tenue); }
+
+#idioma { position: fixed; top: 22px; right: 24px; z-index: 9; pointer-events: auto; display: inline-flex; align-items: center; gap: 0; background: none; border: 0; padding: 4px 2px; cursor: pointer; font: inherit; color: #fff; text-shadow: var(--sombra); }
+#idioma span { font-size: 12px; letter-spacing: 2px; font-weight: 500; color: rgba(255,255,255,0.45); padding: 0 6px; transition: color .2s; }
+#idioma span + span { border-left: 1px solid rgba(255,255,255,0.3); }
+#idioma span.on { color: #fff; font-weight: 700; }
+#idioma:hover span { color: rgba(255,255,255,0.8); }
+#idioma:hover span.on { color: #fff; }
+#idioma:focus-visible { outline: 1px solid rgba(255,255,255,0.6); outline-offset: 3px; border-radius: 3px; }
+@media (max-width: 640px) { #idioma { top: 16px; right: 62px; } #idioma span { font-size: 11px; padding: 0 5px; } }

@@ -1,10 +1,10 @@
 var CONFIG = {
   variables: [
-    { campo: "elevacion_m", nombre: "Elevación", unidad: "m", min: -200, max: 6000 },
-    { campo: "pendiente_grados", nombre: "Pendiente", unidad: "°", min: 0, max: 30 },
-    { campo: "rugosidad", nombre: "Rugosidad", unidad: "/100", min: 0, max: 100 },
-    { campo: "temp_media_c", nombre: "Temperatura", unidad: "°C", min: -30, max: 40 },
-    { campo: "insolacion", nombre: "Insolación", unidad: "kWh/m²·día", min: 2, max: 8 }
+    { campo: "elevacion_m", get nombre() { return T("Elevación"); }, unidad: "m", min: -200, max: 6000 },
+    { campo: "pendiente_grados", get nombre() { return T("Pendiente"); }, unidad: "°", min: 0, max: 30 },
+    { campo: "rugosidad", get nombre() { return T("Rugosidad"); }, unidad: "/100", min: 0, max: 100 },
+    { campo: "temp_media_c", get nombre() { return T("Temperatura"); }, unidad: "°C", min: -30, max: 40 },
+    { campo: "insolacion", get nombre() { return T("Insolación"); }, get unidad() { return T("kWh/m²·día"); }, min: 2, max: 8 }
   ],
   referencias: {
     Marte: { elevacion_m: 1500, pendiente_grados: 10, rugosidad: 50, temp_media_c: -15, insolacion: 4 },
@@ -12,45 +12,45 @@ var CONFIG = {
   },
   misiones: [
     { id: "rover", nombre: "Rover", imagen: "",
-      texto: "Un rover necesita terreno que se pueda recorrer.",
-      uso: "Probar un vehículo y su navegación autónoma.",
+      get texto() { return T("Un rover necesita terreno que se pueda recorrer."); },
+      get uso() { return T("Probar un vehículo y su navegación autónoma."); },
       pesos: { elevacion_m: 0.05, pendiente_grados: 0.35, rugosidad: 0.4, temp_media_c: 0.1, insolacion: 0.1 } },
-    { id: "habitat", nombre: "Hábitat", imagen: "",
-      texto: "Una base habitada depende del clima.",
-      uso: "Ensayar la vida de una tripulación en una base.",
+    { id: "habitat", get nombre() { return T("Hábitat"); }, imagen: "",
+      get texto() { return T("Una base habitada depende del clima."); },
+      get uso() { return T("Ensayar la vida de una tripulación en una base."); },
       pesos: { elevacion_m: 0.1, pendiente_grados: 0.1, rugosidad: 0.1, temp_media_c: 0.55, insolacion: 0.15 } },
-    { id: "paneles", nombre: "Paneles", imagen: "",
-      texto: "Los paneles solares necesitan mucha luz.",
-      uso: "Medir cuánta energía darían los paneles solares.",
+    { id: "paneles", get nombre() { return T("Paneles"); }, imagen: "",
+      get texto() { return T("Los paneles solares necesitan mucha luz."); },
+      get uso() { return T("Medir cuánta energía darían los paneles solares."); },
       pesos: { elevacion_m: 0.15, pendiente_grados: 0.05, rugosidad: 0.05, temp_media_c: 0.15, insolacion: 0.6 } },
-    { id: "aterrizaje", nombre: "Aterrizaje", imagen: "",
-      texto: "Una nave necesita suelo llano y poco rocoso.",
-      uso: "Practicar el descenso y el posado de una nave.",
+    { id: "aterrizaje", get nombre() { return T("Aterrizaje"); }, imagen: "",
+      get texto() { return T("Una nave necesita suelo llano y poco rocoso."); },
+      get uso() { return T("Practicar el descenso y el posado de una nave."); },
       pesos: { elevacion_m: 0.05, pendiente_grados: 0.45, rugosidad: 0.4, temp_media_c: 0.05, insolacion: 0.05 } },
-    { id: "perforacion", nombre: "Perforación", imagen: "",
-      texto: "Buscar agua y hielo bajo el suelo exige frío y terreno firme.",
-      uso: "Ensayar un taladro que extrae muestras del subsuelo.",
+    { id: "perforacion", get nombre() { return T("Perforación"); }, imagen: "",
+      get texto() { return T("Buscar agua y hielo bajo el suelo exige frío y terreno firme."); },
+      get uso() { return T("Ensayar un taladro que extrae muestras del subsuelo."); },
       pesos: { elevacion_m: 0.1, pendiente_grados: 0.2, rugosidad: 0.25, temp_media_c: 0.35, insolacion: 0.1 } }
   ],
   objetivos: [
-    { id: "general", nombre: "Referencias generales", etiqueta: "General", cuerpo: "Todos", icono: "objGeneral", ref: null, provisional: false,
-      texto: "Marte y la Luna con una referencia general para cada uno.",
-      fuente: "Una referencia por cuerpo" },
-    { id: "luna-polo", nombre: "Luna · Polo sur", etiqueta: "Luna · Polo sur", cuerpo: "Luna", icono: "objLunaPolo", ref: null, provisional: true,
-      texto: "Región del polo sur lunar donde NASA planea la base Artemis.",
-      fuente: "Fuente prevista: LOLA y Diviner (misión LRO)" },
-    { id: "marte-arcadia", nombre: "Marte · Arcadia Planitia", etiqueta: "Marte · Arcadia", cuerpo: "Marte", icono: "objArcadia", ref: null, provisional: true,
-      texto: "Llanura de latitudes medias del norte, con hielo bajo el suelo.",
-      fuente: "Fuente prevista: MOLA y CTX" },
-    { id: "marte-deuteronilus", nombre: "Marte · Deuteronilus Mensae", etiqueta: "Marte · Deuteronilus", cuerpo: "Marte", icono: "objDeuteronilus", ref: null, provisional: true,
-      texto: "Valles con glaciares en las latitudes medias del norte.",
-      fuente: "Fuente prevista: MOLA y CTX" }
+    { id: "general", get nombre() { return T("Referencias generales"); }, etiqueta: "General", cuerpo: "Todos", icono: "objGeneral", ref: null, provisional: false,
+      get texto() { return T("Marte y la Luna con una referencia general para cada uno."); },
+      get fuente() { return T("Una referencia por cuerpo"); } },
+    { id: "luna-polo", get nombre() { return T("Luna · Polo sur"); }, get etiqueta() { return T("Luna · Polo sur"); }, cuerpo: "Luna", icono: "objLunaPolo", ref: null, provisional: true,
+      get texto() { return T("Región del polo sur lunar donde NASA planea la base Artemis."); },
+      get fuente() { return T("Fuente prevista: LOLA y Diviner (misión LRO)"); } },
+    { id: "marte-arcadia", get nombre() { return T("Marte · Arcadia Planitia"); }, get etiqueta() { return T("Marte · Arcadia"); }, cuerpo: "Marte", icono: "objArcadia", ref: null, provisional: true,
+      get texto() { return T("Llanura de latitudes medias del norte, con hielo bajo el suelo."); },
+      get fuente() { return T("Fuente prevista: MOLA y CTX"); } },
+    { id: "marte-deuteronilus", get nombre() { return T("Marte · Deuteronilus Mensae"); }, get etiqueta() { return T("Marte · Deuteronilus"); }, cuerpo: "Marte", icono: "objDeuteronilus", ref: null, provisional: true,
+      get texto() { return T("Valles con glaciares en las latitudes medias del norte."); },
+      get fuente() { return T("Fuente prevista: MOLA y CTX"); } }
   ],
   cuerpos: ["Todos", "Marte", "Luna"],
   categorias: [
-    { id: "Todos", nombre: "Todos" },
-    { id: "Famoso", nombre: "Famosos" },
-    { id: "Poco conocido", nombre: "Poco conocidos" },
+    { id: "Todos", get nombre() { return T("Todos"); } },
+    { id: "Famoso", get nombre() { return T("Famosos"); } },
+    { id: "Poco conocido", get nombre() { return T("Poco conocidos"); } },
     { id: "Ecuador", nombre: "Ecuador" }
   ],
   giroVelocidad: 0.35,
@@ -64,19 +64,19 @@ var CONFIG = {
   mosaico: {
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
     nivelMax: 15,
-    credito: "Imágenes: Esri, Maxar, Earthstar Geographics"
+    get credito() { return T("Imágenes: Esri, Maxar, Earthstar Geographics"); }
   },
   foto: {
     url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/export",
     anchoMetros: 14000,
     ancho: 640,
     alto: 320,
-    credito: "Imagen satelital: Esri, Maxar, Earthstar Geographics"
+    get credito() { return T("Imagen satelital: Esri, Maxar, Earthstar Geographics"); }
   },
   vistas: [
-    { etiqueta: "Región", metros: 160000 },
-    { etiqueta: "Zona", metros: 14000 },
-    { etiqueta: "Detalle", metros: 2500 }
+    { get etiqueta() { return T("Región"); }, metros: 160000 },
+    { get etiqueta() { return T("Zona"); }, metros: 14000 },
+    { get etiqueta() { return T("Detalle"); }, metros: 2500 }
   ]
 };
 
@@ -117,7 +117,7 @@ function altitudMinima() {
 
 var TEXTURAS = {
   tierra: { img: CONFIG.imagenTierra, relieve: CONFIG.imagenRelieve, brillo: CONFIG.colorBrillo },
-  marte: { img: "lib/img/marte.jpg", relieve: "lib/img/marte_relieve.jpg", brillo: "#d98a66", credito: "Solar System Scope (CC BY 4.0), datos de NASA" },
+  marte: { img: "lib/img/marte.jpg", relieve: "lib/img/marte_relieve.jpg", brillo: "#d98a66", get credito() { return T("Solar System Scope (CC BY 4.0), datos de NASA"); } },
   luna: { img: "lib/img/luna.jpg", relieve: "lib/img/luna_relieve.jpg", brillo: "#aeb4bb", credito: "NASA Scientific Visualization Studio (LRO)" }
 };
 
@@ -189,7 +189,7 @@ function chip(accion, valor, texto, activa) {
 function ventanaLugares() {
   var chipsCuerpo = CONFIG.cuerpos.map(function (c) {
     var punto = c === "Todos" ? "" : '<i class="punto ' + c.toLowerCase() + '"></i>';
-    return chip("cuerpo", c, punto + c, cuerpo === c);
+    return chip("cuerpo", c, punto + T(c), cuerpo === c);
   }).join("");
   var chipsCat = CONFIG.categorias.map(function (c) { return chip("categoria", c.id, c.nombre, categoria === c.id); }).join("");
   var lista = ordenados();
@@ -198,70 +198,70 @@ function ventanaLugares() {
       '<i class="punto ' + d.referencia.toLowerCase() + '"></i><span class="cuerpo"><span class="nombre">' + d.nombre + '</span><span class="pais">' + d.pais + '</span></span>' +
       '<span class="num">' + d.puntaje + '</span></button>';
   }).join("");
-  if (!filas) { filas = '<p class="texto">No hay lugares con este filtro.</p>'; }
-  var titulo = mision.id === "custom" ? "Parámetros personalizados" : "Misión · " + mision.nombre;
-  var detObjetivo = objetivo.provisional ? "Valores por completar: por ahora usa la referencia general" : objetivo.fuente;
-  return '<div class="criterio"><div><span class="etq">Ordenado por</span><b>' + titulo + '</b><span class="det">' + pesaTexto(mision) + '</span></div>' +
-    '<button class="cambiar" data-accion="abrir-mision">Cambiar</button></div>' +
-    '<div class="criterio"><div><span class="etq">Comparado con</span><b>' + objetivo.nombre + '</b><span class="det">' + detObjetivo + '</span></div>' +
-    '<button class="cambiar" data-accion="abrir-objetivo">Cambiar</button></div>' +
-    '<div class="grupo"><span class="etq">Cuerpo</span><div class="chips">' + chipsCuerpo + '</div></div>' +
-    '<div class="grupo"><span class="etq">Tipo</span><div class="chips">' + chipsCat + '</div></div>' +
-    '<div class="encabezado"><span>' + lista.length + ' sitios</span><span>Similitud (0–100)</span></div>' + filas;
+  if (!filas) { filas = T('<p class="texto">No hay lugares con este filtro.</p>'); }
+  var titulo = mision.id === "custom" ? T("Parámetros personalizados") : T("Misión · ") + mision.nombre;
+  var detObjetivo = objetivo.provisional ? T("Valores por completar: por ahora usa la referencia general") : objetivo.fuente;
+  return T('<div class="criterio"><div><span class="etq">Ordenado por</span><b>') + titulo + '</b><span class="det">' + pesaTexto(mision) + '</span></div>' +
+    T('<button class="cambiar" data-accion="abrir-mision">Cambiar</button></div>') +
+    T('<div class="criterio"><div><span class="etq">Comparado con</span><b>') + objetivo.nombre + '</b><span class="det">' + detObjetivo + '</span></div>' +
+    T('<button class="cambiar" data-accion="abrir-objetivo">Cambiar</button></div>') +
+    T('<div class="grupo"><span class="etq">Cuerpo</span><div class="chips">') + chipsCuerpo + '</div></div>' +
+    T('<div class="grupo"><span class="etq">Tipo</span><div class="chips">') + chipsCat + '</div></div>' +
+    '<div class="encabezado"><span>' + lista.length + T(' sitios</span><span>Similitud (0–100)</span></div>') + filas;
 }
 
 function ventanaMetodo() {
   var filas = CONFIG.variables.map(function (v) {
-    return '<tr><td class="n">' + v.nombre + '</td><td>' + v.min + ' a ' + v.max + (v.unidad === "/100" ? "" : " " + v.unidad) + '</td><td>' + CONFIG.referencias.Marte[v.campo] + '</td><td>' + CONFIG.referencias.Luna[v.campo] + '</td></tr>';
+    return '<tr><td class="n">' + v.nombre + '</td><td>' + v.min + T(' a ') + v.max + (v.unidad === "/100" ? "" : " " + v.unidad) + '</td><td>' + CONFIG.referencias.Marte[v.campo] + '</td><td>' + CONFIG.referencias.Luna[v.campo] + '</td></tr>';
   }).join("");
-  return '<p class="texto">ORBIS compara cada lugar de la Tierra con una referencia de Marte o de la Luna y resume el parecido en un número de 0 a 100.</p>' +
-    '<div class="formula">Puntaje = 100 × (1 − Σ peso × diferencia)</div>' +
-    '<ol class="pasos"><li>Cada variable se lleva a una escala de 0 a 1 con su rango.</li><li>Se mide la diferencia entre el lugar y la referencia.</li><li>Cada diferencia se multiplica por el peso que tiene en la misión elegida.</li><li>Se suman y se restan de 100: cuanto más cerca de 100, más parecido.</li></ol>' +
-    '<div class="sub">Variables y referencias</div><table><tr><th>Variable</th><th>Rango</th><th>Marte</th><th>Luna</th></tr>' + filas + '</table>' +
-    '<p class="nota">El puntaje mide parecido según las variables elegidas. No es una probabilidad ni una prueba científica. En el menú Objetivo se puede comparar con un lugar concreto de Marte o de la Luna.</p>';
+  return T('<p class="texto">ORBIS compara cada lugar de la Tierra con una referencia de Marte o de la Luna y resume el parecido en un número de 0 a 100.</p>') +
+    T('<div class="formula">Puntaje = 100 × (1 − Σ peso × diferencia)</div>') +
+    T('<ol class="pasos"><li>Cada variable se lleva a una escala de 0 a 1 con su rango.</li><li>Se mide la diferencia entre el lugar y la referencia.</li><li>Cada diferencia se multiplica por el peso que tiene en la misión elegida.</li><li>Se suman y se restan de 100: cuanto más cerca de 100, más parecido.</li></ol>') +
+    T('<div class="sub">Variables y referencias</div><table><tr><th>Variable</th><th>Rango</th><th>Marte</th><th>Luna</th></tr>') + filas + '</table>' +
+    T('<p class="nota">El puntaje mide parecido según las variables elegidas. No es una probabilidad ni una prueba científica. En el menú Objetivo se puede comparar con un lugar concreto de Marte o de la Luna.</p>');
 }
 
 function ventanaFuentes() {
   var filas = [
-    ["Elevación", "Modelos digitales de elevación (NASA SRTM, Copernicus DEM)"],
-    ["Pendiente y rugosidad", "Se calculan a partir del modelo de elevación"],
-    ["Temperatura", "Datos de clima y de superficie (NASA Earthdata)"],
-    ["Insolación", "Datos de radiación solar (NASA POWER)"],
-    ["Referencia de la Luna", "Mapas de la misión LRO (instrumento LOLA)"],
-    ["Referencia de Marte", "Mapas de la misión MGS (instrumento MOLA)"]
+    [T("Elevación"), T("Modelos digitales de elevación (NASA SRTM, Copernicus DEM)")],
+    [T("Pendiente y rugosidad"), T("Se calculan a partir del modelo de elevación")],
+    [T("Temperatura"), T("Datos de clima y de superficie (NASA Earthdata)")],
+    [T("Insolación"), T("Datos de radiación solar (NASA POWER)")],
+    [T("Referencia de la Luna"), T("Mapas de la misión LRO (instrumento LOLA)")],
+    [T("Referencia de Marte"), T("Mapas de la misión MGS (instrumento MOLA)")]
   ].map(function (f) { return '<tr><td class="n">' + f[0] + '</td><td>' + f[1] + '</td></tr>'; }).join("");
-  return '<p class="texto">Fuentes previstas para los valores reales de cada variable. Cada dato se anotará con su origen y su fecha.</p>' +
-    '<table><tr><th>Dato</th><th>Fuente prevista</th></tr>' + filas + '</table>' +
-    '<div class="sub">Visualización</div><p class="texto">Textura de la Tierra: NASA Blue Marble. Globo 3D: globe.gl sobre Three.js.</p>';
+  return T('<p class="texto">Fuentes previstas para los valores reales de cada variable. Cada dato se anotará con su origen y su fecha.</p>') +
+    T('<table><tr><th>Dato</th><th>Fuente prevista</th></tr>') + filas + '</table>' +
+    T('<div class="sub">Visualización</div><p class="texto">Textura de la Tierra: NASA Blue Marble. Globo 3D: globe.gl sobre Three.js.</p>');
 }
 
 function ventanaLimites() {
   var filas = [
-    ["Gravedad", "9,8 m/s²", "3,7 m/s²", "1,6 m/s²"],
-    ["Atmósfera", "Densa y respirable", "Muy fina (menos del 1 % de la presión terrestre)", "Casi inexistente"],
-    ["Radiación", "Protegida por la atmósfera y el campo magnético", "Mucho mayor", "Mucho mayor"],
-    ["Polvo y suelo", "Suelo con humedad y vida", "Polvo fino y rojizo", "Regolito muy abrasivo"],
-    ["Día y noche", "24 horas", "Casi 24 h 40 min", "Cerca de 29,5 días"]
+    [T("Gravedad"), T("9,8 m/s²"), T("3,7 m/s²"), T("1,6 m/s²")],
+    [T("Atmósfera"), T("Densa y respirable"), T("Muy fina (menos del 1 % de la presión terrestre)"), T("Casi inexistente")],
+    [T("Radiación"), T("Protegida por la atmósfera y el campo magnético"), T("Mucho mayor"), T("Mucho mayor")],
+    [T("Polvo y suelo"), T("Suelo con humedad y vida"), T("Polvo fino y rojizo"), T("Regolito muy abrasivo")],
+    [T("Día y noche"), T("24 horas"), T("Casi 24 h 40 min"), T("Cerca de 29,5 días")]
   ].map(function (f) { return '<tr><td class="n">' + f[0] + '</td><td>' + f[1] + '</td><td>' + f[2] + '</td><td>' + f[3] + '</td></tr>'; }).join("");
-  return '<p class="texto">Ningún lugar de la Tierra reproduce todo lo que ocurre en Marte o en la Luna. Estas son las diferencias que el puntaje no mide.</p>' +
-    '<table><tr><th>Factor</th><th>Tierra</th><th>Marte</th><th>Luna</th></tr>' + filas + '</table>' +
-    '<p class="nota">Por eso cada ficha indica en qué no se parece el lugar y qué tan confiable es su dato.</p>';
+  return T('<p class="texto">Ningún lugar de la Tierra reproduce todo lo que ocurre en Marte o en la Luna. Estas son las diferencias que el puntaje no mide.</p>') +
+    T('<table><tr><th>Factor</th><th>Tierra</th><th>Marte</th><th>Luna</th></tr>') + filas + '</table>' +
+    T('<p class="nota">Por eso cada ficha indica en qué no se parece el lugar y qué tan confiable es su dato.</p>');
 }
 
 function ventanaProyecto() {
-  return '<p class="texto"><b>ORBIS</b> es un simulador 3D de selección de sitios análogos: muestra qué lugares de la Tierra sirven para ensayar misiones a la Luna y a Marte.</p>' +
-    '<p class="texto">Proyecto del NASA Space Apps Challenge 2026 (Guayaquil), reto "Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars".</p>' +
-    '<div class="sub">Cómo usarlo</div><ol class="pasos"><li>Gira el planeta y toca un punto rojo.</li><li>Elige el tipo de misión en el menú Misión.</li><li>En la ficha, abre "Ver el sitio de cerca".</li></ol>' +
-    '<div class="sub">Atajos de teclado</div><p class="texto">↑ ↓ cambian de lugar · 1 a 5 cambian de misión · Esc cierra.</p>' +
-    '<div class="sub">Equipo</div><p class="texto">Por completar.</p>';
+  return T('<p class="texto"><b>ORBIS</b> es un simulador 3D de selección de sitios análogos: muestra qué lugares de la Tierra sirven para ensayar misiones a la Luna y a Marte.</p>') +
+    T('<p class="texto">Proyecto del NASA Space Apps Challenge 2026 (Guayaquil), reto "Identify Earth Locations that Analog the Permanent Moon Base Locations and Mars".</p>') +
+    T('<div class="sub">Cómo usarlo</div><ol class="pasos"><li>Gira el planeta y toca un punto rojo.</li><li>Elige el tipo de misión en el menú Misión.</li><li>En la ficha, abre "Ver el sitio de cerca".</li></ol>') +
+    T('<div class="sub">Atajos de teclado</div><p class="texto">↑ ↓ cambian de lugar · 1 a 5 cambian de misión · Esc cierra.</p>') +
+    T('<div class="sub">Equipo</div><p class="texto">Por completar.</p>');
 }
 
 var pestana = "proyecto";
 var PESTANAS = [
-  { id: "proyecto", nombre: "Proyecto", html: ventanaProyecto },
-  { id: "metodo", nombre: "Método", html: ventanaMetodo },
-  { id: "fuentes", nombre: "Fuentes", html: ventanaFuentes },
-  { id: "limites", nombre: "Límites", html: ventanaLimites }
+  { id: "proyecto", get nombre() { return T("Proyecto"); }, html: ventanaProyecto },
+  { id: "metodo", get nombre() { return T("Método"); }, html: ventanaMetodo },
+  { id: "fuentes", get nombre() { return T("Fuentes"); }, html: ventanaFuentes },
+  { id: "limites", get nombre() { return T("Límites"); }, html: ventanaLimites }
 ];
 
 function ventanaAcerca() {
@@ -275,7 +275,7 @@ function ventanaAcerca() {
 function pesaTexto(m) {
   var vals = CONFIG.variables.map(function (v) { return { n: v.nombre, p: m.pesos[v.campo] }; });
   var iguales = vals.every(function (x) { return x.p === vals[0].p; });
-  if (iguales) { return "Todas por igual"; }
+  if (iguales) { return T("Todas por igual"); }
   return vals.sort(function (a, b) { return b.p - a.p; }).slice(0, 2).map(function (x) { return x.n + " " + Math.round(x.p * 100) + "%"; }).join(" · ");
 }
 
@@ -295,14 +295,14 @@ function ventanaObjetivo() {
   var tarjetas = CONFIG.objetivos.map(function (o) {
     return '<button class="tarjeta' + (o.id === objetivo.id ? " activa" : "") + '" data-accion="objetivo" data-valor="' + o.id + '">' +
       '<div class="dibujo">' + ICONOS[o.icono] + '</div><h3>' + o.nombre + '</h3><p>' + o.texto + '</p><p class="uso">' + o.fuente + '</p>' +
-      '<div class="pesa">' + (o.provisional ? "Valores por completar" : "Valores de ejemplo") + '</div></button>';
+      '<div class="pesa">' + (o.provisional ? T("Valores por completar") : T("Valores de ejemplo")) + '</div></button>';
   }).join("");
-  return '<p class="texto">Elige el lugar de Marte o de la Luna con el que quieres comparar los sitios de la Tierra.</p><div class="tarjetas cuatro">' + tarjetas + '</div>' +
-    '<p class="nota">Los objetivos concretos usan la referencia general hasta que se carguen sus valores reales.</p>';
+  return T('<p class="texto">Elige el lugar de Marte o de la Luna con el que quieres comparar los sitios de la Tierra.</p><div class="tarjetas cuatro">') + tarjetas + '</div>' +
+    T('<p class="nota">Los objetivos concretos usan la referencia general hasta que se carguen sus valores reales.</p>');
 }
 
 function etiquetaObjetivo() {
-  document.getElementById("itemObjetivo").textContent = "Objetivo · " + objetivo.etiqueta;
+  document.getElementById("itemObjetivo").textContent = T("Objetivo · ") + objetivo.etiqueta;
 }
 
 function seleccionarObjetivo(id) {
@@ -331,9 +331,9 @@ function panelPersonal() {
       '<span class="dp" data-pct="' + v.campo + '">' + Math.round(p[v.campo] * 100) + '%</span></label>';
   }).join("");
   return '<div class="personal' + (mision.id === "custom" ? " activa" : "") + '" id="personal">' +
-    '<div class="ptop"><div><h3>Personalizada</h3><p>Ajusta los deslizadores y pulsa Actualizar para ver los sitios.</p></div>' +
-    '<button class="igualar" data-accion="igualar">Igualar todo</button></div>' + filas +
-    '<div class="pie"><button class="actualizar" data-accion="actualizar">Actualizar</button></div></div>';
+    T('<div class="ptop"><div><h3>Personalizada</h3><p>Ajusta los deslizadores y pulsa Actualizar para ver los sitios.</p></div>') +
+    T('<button class="igualar" data-accion="igualar">Igualar todo</button></div>') + filas +
+    T('<div class="pie"><button class="actualizar" data-accion="actualizar">Actualizar</button></div></div>');
 }
 
 function mostrarPorcentajes() {
@@ -345,7 +345,7 @@ function mostrarPorcentajes() {
 }
 
 function usarPersonalizada() {
-  mision = { id: "custom", nombre: "Personalizada", pesos: pesosDesdeCrudos() };
+  mision = { id: "custom", get nombre() { return T("Personalizada"); }, pesos: pesosDesdeCrudos() };
   recalcular();
   etiquetaMision();
   pintarMarcas();
@@ -357,13 +357,13 @@ function usarPersonalizada() {
 }
 
 var VENTANAS = {
-  lugares: { titulo: "Sitios análogos", clase: "menu", html: ventanaLugares },
-  metodo: { titulo: "Método", clase: "menu", html: ventanaMetodo },
-  fuentes: { titulo: "Fuentes", clase: "menu", html: ventanaFuentes },
-  limites: { titulo: "Límites de la analogía", clase: "menu", html: ventanaLimites },
-  acerca: { titulo: "Acerca de ORBIS", clase: "menu", html: ventanaAcerca },
-  mision: { titulo: "¿Qué quieres probar?", clase: "menu ancho", html: ventanaMision },
-  objetivo: { titulo: "¿Con qué lugar comparar?", clase: "menu ancho", html: ventanaObjetivo }
+  lugares: { get titulo() { return T("Sitios análogos"); }, clase: "menu", html: ventanaLugares },
+  metodo: { get titulo() { return T("Método"); }, clase: "menu", html: ventanaMetodo },
+  fuentes: { get titulo() { return T("Fuentes"); }, clase: "menu", html: ventanaFuentes },
+  limites: { get titulo() { return T("Límites de la analogía"); }, clase: "menu", html: ventanaLimites },
+  acerca: { get titulo() { return T("Acerca de ORBIS"); }, clase: "menu", html: ventanaAcerca },
+  mision: { get titulo() { return T("¿Qué quieres probar?"); }, clase: "menu ancho", html: ventanaMision },
+  objetivo: { get titulo() { return T("¿Con qué lugar comparar?"); }, clase: "menu ancho", html: ventanaObjetivo }
 };
 
 function pintarVentana() {
@@ -371,7 +371,7 @@ function pintarVentana() {
   var el = document.getElementById("ventana");
   var scroll = el.scrollTop;
   el.className = v.clase;
-  el.innerHTML = '<div class="vtit"><h2>' + v.titulo + '</h2><button class="cerrar" data-accion="cerrar" aria-label="Cerrar">✕</button></div>' + v.html();
+  el.innerHTML = '<div class="vtit"><h2>' + v.titulo + T('</h2><button class="cerrar" data-accion="cerrar" aria-label="Cerrar">✕</button></div>') + v.html();
   el.scrollTop = scroll;
 }
 
@@ -419,7 +419,7 @@ function vistasSitio(d) {
   var lista = (d.fotos || "").split("|").map(function (x) { return x.trim(); }).filter(function (x) { return x; });
   if (d.foto && lista.indexOf(d.foto) < 0) { lista.unshift(d.foto); }
   var propias = lista.map(function (x, i) {
-    return { url: x, urlGrande: x, etiqueta: "Foto " + (i + 1), credito: d.fotos_credito || d.foto_credito || "" };
+    return { url: x, urlGrande: x, etiqueta: T("Foto ") + (i + 1), credito: d.fotos_credito || d.foto_credito || "" };
   });
   var satelitales = CONFIG.vistas.map(function (v) {
     return { url: urlFoto(d, v.metros), urlGrande: urlFoto(d, v.metros, 1600, 1000), etiqueta: v.etiqueta, credito: CONFIG.foto.credito };
@@ -451,8 +451,8 @@ function pintarGaleria() {
   var minis = vistas.map(function (v, i) {
     return '<button class="gmini' + (i === galeriaIndice ? " activa" : "") + '" data-accion="vista" data-valor="' + i + '"><img src="' + v.url + '" alt="" onerror="this.parentNode.style.display=\'none\'"><span>' + v.etiqueta + '</span></button>';
   }).join("");
-  g.innerHTML = '<div class="gtit">Vistas del sitio</div>' +
-    '<figure class="gprincipal"><img id="gimagen" src="' + actual.url + '" alt="Vista de ' + seleccionado.nombre + '"><figcaption id="gpie">' + textoVista(actual) + '</figcaption></figure>' +
+  g.innerHTML = T('<div class="gtit">Vistas del sitio</div>') +
+    '<figure class="gprincipal"><img id="gimagen" src="' + actual.url + '" alt="' + T('Vista de ') + seleccionado.nombre + '"><figcaption id="gpie">' + textoVista(actual) + '</figcaption></figure>' +
     '<div class="gminis">' + minis + '</div>';
   g.classList.remove("oculta");
 }
@@ -465,11 +465,11 @@ function pintarVisor() {
   var v = vistas[visorIndice];
   var img = document.getElementById("vimg");
   var carga = document.getElementById("vcarga");
-  carga.textContent = "Cargando imagen…";
+  carga.textContent = T("Cargando imagen…");
   carga.style.display = "block";
   img.style.opacity = 0.25;
   img.onload = function () { carga.style.display = "none"; img.style.opacity = 1; };
-  img.onerror = function () { carga.textContent = "No se pudo cargar la imagen"; };
+  img.onerror = function () { carga.textContent = T("No se pudo cargar la imagen"); };
   img.src = v.urlGrande;
   document.getElementById("vpie").innerHTML = textoVista(v) + (vistas.length > 1 ? ' · ' + (visorIndice + 1) + ' / ' + vistas.length : "");
   document.querySelector(".vant").style.display = vistas.length > 1 ? "" : "none";
@@ -508,14 +508,14 @@ function elegirVista(i) {
 
 function fotoHtml(d) {
   var credito = d.foto ? (d.foto_credito || "") : CONFIG.foto.credito;
-  return '<figure class="foto" data-accion="visor" data-valor="' + indiceBanner(d) + '"><img src="' + urlFoto(d) + '" alt="Vista de ' + d.nombre + '" decoding="async" onerror="this.parentNode.classList.add(\'sinfoto\')">' +
+  return '<figure class="foto" data-accion="visor" data-valor="' + indiceBanner(d) + '"><img src="' + urlFoto(d) + '" alt="' + T('Vista de ') + d.nombre + '" decoding="async" onerror="this.parentNode.classList.add(\'sinfoto\')">' +
     (credito ? '<figcaption>' + credito + '</figcaption>' : '') + '</figure>';
 }
 
 function botonSimilitud(d) {
   var c = contrapartePara(d);
   if (!c) { return ""; }
-  return '<button class="ver-sim" data-accion="similitud"><span>Ver similitud</span><small>con ' + c.nombre + '</small></button>';
+  return T('<button class="ver-sim" data-accion="similitud"><span>Ver similitud</span><small>con ') + c.nombre + '</small></button>';
 }
 
 function fichaCuerpoHtml(c) {
@@ -524,54 +524,54 @@ function fichaCuerpoHtml(c) {
   var filas = a.partes.map(function (p) {
     return '<tr><td class="n">' + p.v.nombre + '</td><td>' + p.valor + ' ' + p.v.unidad + '</td><td>' + p.ref + ' ' + p.v.unidad + '</td></tr>';
   }).join("");
-  var tabla = '<table><tr><th>Variable</th><th>' + a.nombre + '</th><th>' + c.referencia + ' (ref.)</th></tr>' + filas + '</table>' +
-    '<p class="nota">Valores de prueba: aún no son datos reales de ' + c.referencia + '.</p>';
-  var datos = '<div class="datosfila"><span>Cuerpo</span><span>' + c.referencia + '</span></div>' +
-    '<div class="datosfila"><span>Latitud</span><span>' + Number(c.lat).toFixed(2) + '</span></div>' +
-    '<div class="datosfila"><span>Longitud</span><span>' + Number(c.lon).toFixed(2) + '</span></div>';
-  return '<div class="cab"><div><div class="tit">' + c.nombre + '</div><div class="meta">' + c.referencia + ' · Contraparte de ' + a.nombre + '</div></div>' +
-    '<button class="cerrar" data-accion="cerrar-ficha" aria-label="Cerrar ficha">✕</button></div>' +
+  var tabla = '<table><tr><th>Variable</th><th>' + a.nombre + '</th><th>' + T(c.referencia) + ' (ref.)</th></tr>' + filas + '</table>' +
+    T('<p class="nota">Valores de prueba: aún no son datos reales de ') + T(c.referencia) + '.</p>';
+  var datos = T('<div class="datosfila"><span>Cuerpo</span><span>') + T(c.referencia) + '</span></div>' +
+    T('<div class="datosfila"><span>Latitud</span><span>') + Number(c.lat).toFixed(2) + '</span></div>' +
+    T('<div class="datosfila"><span>Longitud</span><span>') + Number(c.lon).toFixed(2) + '</span></div>';
+  return '<div class="cab"><div><div class="tit">' + c.nombre + '</div><div class="meta">' + T(c.referencia) + T(' · Contraparte de ') + a.nombre + '</div></div>' +
+    T('<button class="cerrar" data-accion="cerrar-ficha" aria-label="Cerrar ficha">✕</button></div>') +
     '<div class="puntaje"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="' + radio + '" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="2"></circle>' +
     '<circle cx="40" cy="40" r="' + radio + '" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="' + lleno + ' ' + (k - lleno) + '" transform="rotate(-90 40 40)"></circle>' +
     '<text x="40" y="48" text-anchor="middle" class="num">' + a.puntaje + '</text></svg>' +
-    '<div><div class="t1">PARECIDO CON ' + a.nombre.toUpperCase() + '</div><div class="t2">Misión: ' + mision.nombre + '</div></div></div>' +
-    acordeon("Qué es este lugar", c.que_es) +
-    acordeon("Qué se ha hecho aquí", c.hito) +
-    acordeon("Por qué se parece", a.se_parece_en) +
-    acordeon("Comparación de condiciones", tabla) +
-    acordeon("Datos del sitio", datos) +
-    '<button class="boton" data-accion="acercar">VER ZONA ANALIZADA</button>' +
-    '<button class="boton" data-accion="similitud">VER SIMILITUD CON LA TIERRA</button>';
+    T('<div><div class="t1">PARECIDO CON ') + a.nombre.toUpperCase() + T('</div><div class="t2">Misión: ') + mision.nombre + '</div></div></div>' +
+    acordeon(T("Qué es este lugar"), c.que_es) +
+    acordeon(T("Qué se ha hecho aquí"), c.hito) +
+    acordeon(T("Por qué se parece"), a.se_parece_en) +
+    acordeon(T("Comparación de condiciones"), tabla) +
+    acordeon(T("Datos del sitio"), datos) +
+    T('<button class="boton" data-accion="acercar">VER ZONA ANALIZADA</button>') +
+    T('<button class="boton" data-accion="similitud">VER SIMILITUD CON LA TIERRA</button>');
 }
 
 function fichaHtml(d) {
   var radio = 32, c = 2 * Math.PI * radio, lleno = c * d.puntaje / 100;
   var desglose = d.partes.map(function (p) {
     return '<div class="var"><div class="f2"><span>' + p.v.nombre + '</span><b>' + p.valor + ' ' + p.v.unidad + ' · ref. ' + p.ref + '</b></div>' +
-      '<div class="tira"><div style="width:' + Math.round(p.cercania * 100) + '%"></div></div><div class="pc">PARECIDO ' + Math.round(p.cercania * 100) + '%</div></div>';
+      '<div class="tira"><div style="width:' + Math.round(p.cercania * 100) + T('%"></div></div><div class="pc">PARECIDO ') + Math.round(p.cercania * 100) + '%</div></div>';
   }).join("");
   var tags = d.probar.split(", ").map(function (t) {
-    return '<span class="tag' + (t === mision.nombre ? " on" : "") + '">' + t + '</span>';
+    return '<span class="tag' + (t === NOMBRE_ES[mision.id] ? " on" : "") + '">' + T(t) + '</span>';
   }).join("");
-  var datos = '<div class="datosfila"><span>Latitud</span><span>' + Number(d.lat).toFixed(2) + '</span></div>' +
-    '<div class="datosfila"><span>Longitud</span><span>' + Number(d.lon).toFixed(2) + '</span></div>' +
-    '<div class="datosfila"><span>Confianza del dato</span><span>' + d.confianza + '</span></div>' +
-    (d.fuente ? '<div class="datosfila"><span>Fuente</span><span>' + d.fuente + '</span></div>' : '') +
+  var datos = T('<div class="datosfila"><span>Latitud</span><span>') + Number(d.lat).toFixed(2) + '</span></div>' +
+    T('<div class="datosfila"><span>Longitud</span><span>') + Number(d.lon).toFixed(2) + '</span></div>' +
+    T('<div class="datosfila"><span>Confianza del dato</span><span>') + T(d.confianza) + '</span></div>' +
+    (d.fuente ? T('<div class="datosfila"><span>Fuente</span><span>') + d.fuente + '</span></div>' : '') +
     (d.nota ? '<p class="nota">' + d.nota + '</p>' : '');
-  return '<div class="cab"><div><div class="tit">' + d.nombre + '</div><div class="meta">' + d.pais + ' · ' + d.categoria + '</div></div>' +
-    '<button class="cerrar" data-accion="cerrar-ficha" aria-label="Cerrar ficha">✕</button></div>' +
+  return '<div class="cab"><div><div class="tit">' + d.nombre + '</div><div class="meta">' + d.pais + ' · ' + T(d.categoria) + '</div></div>' +
+    T('<button class="cerrar" data-accion="cerrar-ficha" aria-label="Cerrar ficha">✕</button></div>') +
     fotoHtml(d) +
     '<div class="puntaje"><svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="' + radio + '" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="2"></circle>' +
     '<circle cx="40" cy="40" r="' + radio + '" fill="none" stroke="#ffffff" stroke-width="2" stroke-dasharray="' + lleno + ' ' + (c - lleno) + '" transform="rotate(-90 40 40)"></circle>' +
     '<text x="40" y="48" text-anchor="middle" class="num">' + d.puntaje + '</text></svg>' +
-    '<div><div class="t1">SIMILITUD CON ' + (!objetivo.provisional && objetivo.id !== "general" && objetivo.cuerpo === d.referencia ? objetivo.nombre : d.referencia).toUpperCase() + '</div><div class="t2">Misión: ' + mision.nombre + '</div></div></div>' +
-    acordeon("Desglose del puntaje", desglose) +
-    acordeon("Se parece en", d.se_parece_en + botonSimilitud(d)) +
-    acordeon("No se parece en", d.no_se_parece_en) +
-    acordeon("Cómo ayuda", d.como_ayuda) +
-    acordeon("Qué se puede probar", '<div class="tags">' + tags + '</div>') +
-    acordeon("Datos del sitio", datos) +
-    '<button class="boton" data-accion="acercar">VER EL SITIO DE CERCA</button>';
+    T('<div><div class="t1">SIMILITUD CON ') + (!objetivo.provisional && objetivo.id !== "general" && objetivo.cuerpo === d.referencia ? objetivo.nombre : T(d.referencia)).toUpperCase() + T('</div><div class="t2">Misión: ') + mision.nombre + '</div></div></div>' +
+    acordeon(T("Desglose del puntaje"), desglose) +
+    acordeon(T("Se parece en"), d.se_parece_en + botonSimilitud(d)) +
+    acordeon(T("No se parece en"), d.no_se_parece_en) +
+    acordeon(T("Cómo ayuda"), d.como_ayuda) +
+    acordeon(T("Qué se puede probar"), '<div class="tags">' + tags + '</div>') +
+    acordeon(T("Datos del sitio"), datos) +
+    T('<button class="boton" data-accion="acercar">VER EL SITIO DE CERCA</button>');
 }
 
 var fichaVisible = false;
@@ -614,7 +614,7 @@ function tamano(d) {
 }
 
 function textoTip(d) {
-  return d.esContraparte ? d.nombre + " · análogo: " + d.analogo.nombre : d.nombre + " · " + d.puntaje + "/100";
+  return d.esContraparte ? d.nombre + T(" · análogo: ") + d.analogo.nombre : d.nombre + " · " + d.puntaje + "/100";
 }
 
 function crearMarcaFija(d) {
@@ -661,7 +661,7 @@ function iconoRotacion() {
   b.innerHTML = rotando ?
     '<svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2" fill="none"></path></svg>' :
     '<svg viewBox="0 0 16 16" width="14" height="14"><path d="M5 3l8 5-8 5z" fill="currentColor"></path></svg>';
-  b.title = rotando ? "Pausar rotación" : "Reanudar rotación";
+  b.title = rotando ? T("Pausar rotación") : T("Reanudar rotación");
 }
 
 function alternarRotacion() {
@@ -726,7 +726,7 @@ function volver() {
 }
 
 function etiquetaMision() {
-  document.getElementById("itemMision").textContent = "Misión · " + mision.nombre;
+  document.getElementById("itemMision").textContent = T("Misión · ") + mision.nombre;
 }
 
 function cambiarMision(id) {
@@ -777,7 +777,7 @@ function marcarCuerpos() {
 }
 
 function actualizarAviso() {
-  var t = (vista === "tierra" && !comparando) ? "DATOS NASA · PROMEDIO DEL TILE 1° × 1°" : "REFERENCIAS DE MARTE Y LUNA: DATOS DE PRUEBA";
+  var t = (vista === "tierra" && !comparando) ? T("DATOS NASA · PROMEDIO DEL TILE 1° × 1°") : T("REFERENCIAS DE MARTE Y LUNA: DATOS DE PRUEBA");
   var a = document.getElementById("aviso");
   if (a.textContent !== t) { a.textContent = t; }
 }
@@ -831,12 +831,12 @@ function actualizarComparacion() {
   mundo2.htmlElementsData([c]);
   var alt = altitudCaber(mundo2.width(), mundo2.height());
   mundo2.pointOfView({ lat: c.lat, lng: c.lon, altitude: alt }, 0);
-  document.getElementById("etq1").textContent = "Tierra · " + a.nombre;
-  document.getElementById("etq2").textContent = c.referencia + " · " + c.nombre;
-  document.getElementById("tab2").textContent = c.referencia;
+  document.getElementById("etq1").textContent = T("Tierra · ") + a.nombre;
+  document.getElementById("etq2").textContent = T(c.referencia) + " · " + c.nombre;
+  document.getElementById("tab2").textContent = T(c.referencia);
   pintarFicha();
-  abrirAcordeon(document.getElementById("ficha"), "Se parece en");
-  abrirAcordeon(document.getElementById("ficha2"), "Qué es este lugar");
+  abrirAcordeon(document.getElementById("ficha"), T("Se parece en"));
+  abrirAcordeon(document.getElementById("ficha2"), T("Qué es este lugar"));
   document.getElementById("ficha").scrollTop = 0;
   document.getElementById("ficha2").scrollTop = 0;
 }
@@ -1124,7 +1124,7 @@ var paneles = ["ventana", "ficha", "ficha2", "galeria"].map(function (id) {
   var panel = document.getElementById(id);
   var boton = document.createElement("button");
   boton.className = "bajar";
-  boton.setAttribute("aria-label", "Deslizar hacia abajo");
+  boton.setAttribute("aria-label", T("Deslizar hacia abajo"));
   boton.innerHTML = '<svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M5 8 L12 17 L19 8 Z" fill="currentColor"></path></svg>';
   document.body.appendChild(boton);
   var estado = { panel: panel, boton: boton, bajando: false, ultimo: 0 };
@@ -1212,6 +1212,7 @@ function etiquetaParam(x, y, ancla, nombre, valor, abajo) {
 
 var pruebaSobre = "";
 var tipClave = "";
+var NOMBRE_ES = { rover: "Rover", habitat: "Hábitat", paneles: "Paneles", aterrizaje: "Aterrizaje", perforacion: "Perforación" };
 var NOMBRE_ID = { "Rover": "rover", "Hábitat": "habitat", "Paneles": "paneles", "Aterrizaje": "aterrizaje", "Perforación": "perforacion" };
 var CLAVES_PRUEBA = { rover: ["pendiente_grados", "rugosidad"], aterrizaje: ["pendiente_grados", "rugosidad"], habitat: ["temp_media_c", "insolacion"], paneles: ["insolacion", "elevacion_m"], perforacion: ["temp_media_c", "rugosidad"] };
 var TITULO_PRUEBA = { rover: "Ruta del rover", aterrizaje: "Elipse de aterrizaje", habitat: "Zona de hábitat", paneles: "Campo de paneles", perforacion: "Punto de perforación" };
@@ -1226,7 +1227,8 @@ function puntajeDe(d, m) {
 }
 
 function numEs(x) {
-  return (Math.round(x * 100) / 100).toString().replace(".", ",");
+  var t = (Math.round(x * 100) / 100).toString();
+  return IDIOMA === "es" ? t.replace(".", ",") : t;
 }
 
 function tarjetaPrueba(nombre, base) {
@@ -1241,19 +1243,19 @@ function tarjetaPrueba(nombre, base) {
     var clase = cerca >= 0.85 ? "a" : cerca >= 0.65 ? "b" : "c";
     var txt = cerca >= 0.85 ? "muy parecido" : cerca >= 0.65 ? "parecido" : "distinto";
     return '<div class="tp-fila"><span class="tp-n">' + v.nombre + '</span><b>' + numEs(base[campo]) + ' ' + v.unidad + '</b><i class="tp-' + clase + '">' + txt + '</i>' +
-      '<em>' + base.referencia + ': ' + numEs(ref[campo]) + ' ' + v.unidad + '</em></div>';
+      '<em>' + T(base.referencia) + ': ' + numEs(ref[campo]) + ' ' + v.unidad + '</em></div>';
   }).join("");
   var todas = CONFIG.misiones.map(function (x) { return { m: x, p: puntajeDe(base, x) }; });
   var mejor = Math.max.apply(null, todas.map(function (x) { return x.p; }));
   var mini = todas.map(function (x) {
     return '<div class="tp-mini' + (x.m.id === id ? " esta" : "") + (x.p === mejor ? " mejor" : "") + '"><span>' + x.m.nombre + '</span><u><s style="width:' + x.p + '%"></s></u><b>' + x.p + '</b></div>';
   }).join("");
-  return '<div class="tp-tit">' + TITULO_PRUEBA[id] + '</div><div class="tp-uso">' + m.uso + '</div>' +
-    '<div class="tp-sec">Qué pesa más aquí</div>' + filas +
-    '<div class="tp-sec">Puntaje en ' + m.nombre + '</div><div class="tp-punt"><u><s style="width:' + pun + '%"></s></u><b>' + pun + '</b></div>' +
-    '<div class="tp-sec">Este lugar en las 5 misiones</div>' + mini +
-    '<div class="tp-clic">' + (activa ? "Misión activa" : "Clic para usar esta misión") + '</div>' +
-    '<div class="tp-nota">Ubicación ilustrativa. Referencia de ' + base.referencia + ': valores de prueba.</div>';
+  return '<div class="tp-tit">' + T(TITULO_PRUEBA[id]) + '</div><div class="tp-uso">' + m.uso + '</div>' +
+    T('<div class="tp-sec">Qué pesa más aquí</div>') + filas +
+    T('<div class="tp-sec">Puntaje en ') + m.nombre + '</div><div class="tp-punt"><u><s style="width:' + pun + '%"></s></u><b>' + pun + '</b></div>' +
+    T('<div class="tp-sec">Este lugar en las 5 misiones</div>') + mini +
+    '<div class="tp-clic">' + (activa ? T("Misión activa") : T("Clic para usar esta misión")) + '</div>' +
+    T('<div class="tp-nota">Ubicación ilustrativa. Referencia de ') + T(base.referencia) + T(': valores de prueba.</div>');
 }
 
 function ponerTip(x, y) {
@@ -1347,14 +1349,14 @@ function textoPrueba(s, e, n, ancla, txt, activa) {
 
 function zonasPrueba(s, base, ancho, pxkm) {
   if (!base || !base.probar || ancho < 170) { return ""; }
-  var lista = base.probar.split(", "), activa = mision && mision.nombre, out = "", conTexto = ancho >= 320;
+  var lista = base.probar.split(", "), activa = mision && NOMBRE_ES[mision.id], out = "", conTexto = ancho >= 320;
   lista.forEach(function (nombre) {
     var on = nombre === activa, c = "d-prueba" + (on ? " act" : "") + (nombre === pruebaSobre ? " hov" : ""), g = "";
     if (nombre === "Aterrizaje") {
       g += '<path class="' + c + '" d="' + trazoRel(s, elipseLista(-4.6, 3.2, 2.8, 1.5, 25), true) + '"></path>';
       var k = pantallaRel(s, -4.6, 3.2);
       if (k) { g += '<path class="d-cruz' + (on ? " act" : "") + '" d="M' + (k.x - 5) + "," + k.y + " L" + (k.x + 5) + "," + k.y + " M" + k.x + "," + (k.y - 5) + " L" + k.x + "," + (k.y + 5) + '"></path>'; }
-      if (conTexto) { g += textoPrueba(s, -4.6, 0.9, "middle", "ELIPSE DE ATERRIZAJE", on); }
+      if (conTexto) { g += textoPrueba(s, -4.6, 0.9, "middle", T("ELIPSE DE ATERRIZAJE"), on); }
     }
     if (nombre === "Rover") {
       var ruta = [[1.2, 1.2], [2.4, 2.8], [3.8, 2.3], [5.0, 4.0], [6.4, 3.6]];
@@ -1363,7 +1365,7 @@ function zonasPrueba(s, base, ancho, pxkm) {
       var a0 = pantallaRel(s, 1.2, 1.2), a1 = pantallaRel(s, 6.4, 3.6);
       if (a0) { g += '<circle class="d-punto' + (on ? " act" : "") + '" cx="' + a0.x.toFixed(1) + '" cy="' + a0.y.toFixed(1) + '" r="3"></circle>'; }
       if (a1) { g += '<g class="d-icono' + (on ? " act" : "") + '" transform="translate(' + a1.x.toFixed(1) + "," + a1.y.toFixed(1) + ')"><rect x="-8" y="-6" width="16" height="7" rx="1.5"></rect><circle cx="-5" cy="4" r="2.6"></circle><circle cx="5" cy="4" r="2.6"></circle><path d="M2,-6 L5,-11 L9,-11"></path></g>'; }
-      if (conTexto) { g += textoPrueba(s, 3.6, 5.2, "middle", "RUTA DEL ROVER", on); }
+      if (conTexto) { g += textoPrueba(s, 3.6, 5.2, "middle", T("RUTA DEL ROVER"), on); }
     }
     if (nombre === "Hábitat") {
       var h = pantallaRel(s, -3.2, -2.6), rh = 1 * pxkm;
@@ -1371,7 +1373,7 @@ function zonasPrueba(s, base, ancho, pxkm) {
         g += '<circle class="' + c + '" cx="' + h.x.toFixed(1) + '" cy="' + h.y.toFixed(1) + '" r="' + rh.toFixed(1) + '"></circle>';
         g += '<path class="d-icono' + (on ? " act" : "") + '" d="M' + (h.x - 7) + "," + (h.y + 4) + " A7,7 0 0 1 " + (h.x + 7) + "," + (h.y + 4) + " Z M" + (h.x - 11) + "," + (h.y + 4) + " L" + (h.x + 11) + "," + (h.y + 4) + '"></path>';
       }
-      if (conTexto) { g += textoPrueba(s, -3.2, -4.3, "middle", "ZONA DE HÁBITAT", on); }
+      if (conTexto) { g += textoPrueba(s, -3.2, -4.3, "middle", T("ZONA DE HÁBITAT"), on); }
     }
     if (nombre === "Paneles") {
       var caja = [[2.6, -2.8], [5.8, -2.8], [5.8, -4.4], [2.6, -4.4]];
@@ -1380,7 +1382,7 @@ function zonasPrueba(s, base, ancho, pxkm) {
       [3.67, 4.73].forEach(function (e) { rej += trazoRel(s, [[e, -2.8], [e, -4.4]], false); });
       rej += trazoRel(s, [[2.6, -3.6], [5.8, -3.6]], false);
       g += '<path class="d-rejilla' + (on ? " act" : "") + '" d="' + rej + '"></path>';
-      if (conTexto) { g += textoPrueba(s, 4.2, -2.2, "middle", "CAMPO DE PANELES", on); }
+      if (conTexto) { g += textoPrueba(s, 4.2, -2.2, "middle", T("CAMPO DE PANELES"), on); }
     }
     if (nombre === "Perforación") {
       var pf = pantallaRel(s, 0.8, -5.2);
@@ -1389,7 +1391,7 @@ function zonasPrueba(s, base, ancho, pxkm) {
         g += '<circle class="' + c + '" cx="' + pf.x.toFixed(1) + '" cy="' + pf.y.toFixed(1) + '" r="' + (0.22 * pxkm).toFixed(1) + '"></circle>';
         g += '<path class="d-cruz' + (on ? " act" : "") + '" d="M' + (pf.x - 7) + "," + pf.y + " L" + (pf.x + 7) + "," + pf.y + " M" + pf.x + "," + (pf.y - 7) + " L" + pf.x + "," + (pf.y + 7) + '"></path>';
       }
-      if (conTexto) { g += textoPrueba(s, 1.6, -5.35, "start", "PUNTO DE PERFORACIÓN", on); }
+      if (conTexto) { g += textoPrueba(s, 1.6, -5.35, "start", T("PUNTO DE PERFORACIÓN"), on); }
     }
     out += '<g class="d-hit" data-m="' + nombre + '">' + g + '</g>';
   });
@@ -1428,11 +1430,11 @@ function dibujarDetalle() {
   var enCuerpo = !!s.esContraparte;
   var base = enCuerpo ? s.analogo : s;
   partes += zonasPrueba(s, base, ancho, pxkm);
-  var tipo = mision && base.probar && base.probar.split(", ").indexOf(mision.nombre) >= 0 ? "PRUEBA ACTIVA · " + mision.nombre.toUpperCase() : "SE PUEDE PROBAR: " + (base.probar || "").toUpperCase().replace(/, /g, " · ");
+  var tipo = mision && base.probar && base.probar.split(", ").indexOf(NOMBRE_ES[mision.id]) >= 0 ? T("PRUEBA ACTIVA · ") + mision.nombre.toUpperCase() : T("SE PUEDE PROBAR: ") + (base.probar || "").split(", ").map(function (n) { return T(n).toUpperCase(); }).join(" · ");
   partes += '<text class="d-sub der" x="' + ne.x.toFixed(1) + '" y="' + (ne.y - 10).toFixed(1) + '" text-anchor="end">' + tipo + '</text>';
-  partes += '<text class="d-sub" x="' + sw.x.toFixed(1) + '" y="' + (sw.y + 16).toFixed(1) + '">UBICACIÓN ILUSTRATIVA DE LAS PRUEBAS</text>';
-  partes += '<text class="d-tit" x="' + nw.x.toFixed(1) + '" y="' + (nw.y - 10).toFixed(1) + '">ZONA ANALIZADA · 20 × 20 km</text>';
-  if (enCuerpo) { partes += '<text class="d-sub" x="' + nw.x.toFixed(1) + '" y="' + (nw.y - 24).toFixed(1) + '">REFERENCIA DE ' + s.referencia.toUpperCase() + ' · VALORES DE PRUEBA</text>'; }
+  partes += '<text class="d-sub" x="' + sw.x.toFixed(1) + '" y="' + (sw.y + 16).toFixed(1) + T('">UBICACIÓN ILUSTRATIVA DE LAS PRUEBAS</text>');
+  partes += '<text class="d-tit" x="' + nw.x.toFixed(1) + '" y="' + (nw.y - 10).toFixed(1) + T('">ZONA ANALIZADA · 20 × 20 km</text>');
+  if (enCuerpo) { partes += '<text class="d-sub" x="' + nw.x.toFixed(1) + '" y="' + (nw.y - 24).toFixed(1) + T('">REFERENCIA DE ') + T(s.referencia).toUpperCase() + T(' · VALORES DE PRUEBA</text>'); }
   if (ancho >= 250 && base.partes) {
     var vals = base.partes.map(function (p) { return { n: p.v.nombre, t: (enCuerpo ? p.ref : p.valor) + " " + p.v.unidad }; });
     partes += etiquetaParam(nw.x + 14, nw.y + 24, "start", vals[0].n, vals[0].t, false);
@@ -1488,7 +1490,7 @@ function seguir() {
     ancla.setAttribute("opacity", 0);
   }
   var km = Math.round(mundo.pointOfView().altitude * (vista === "marte" ? 3390 : vista === "luna" ? 1737 : radioTierra));
-  var texto = "ALTITUD " + km.toLocaleString("es-EC") + " KM" + creditoActivo;
+  var texto = T("ALTITUD ") + km.toLocaleString("es-EC") + " KM" + creditoActivo;
   var alt = document.getElementById("alt");
   if (alt.textContent !== texto) { alt.textContent = texto; }
   requestAnimationFrame(seguir);
@@ -1524,7 +1526,22 @@ function leerCsv(texto) {
   });
 }
 
+function refrescarTodoIdioma() {
+  etiquetaObjetivo();
+  iconoRotacion();
+  actualizarAviso();
+  marcarCuerpos();
+  filtrar();
+  pintarMarcas();
+  pintarFicha();
+  if (ventanaActual) { pintarVentana(); }
+  pintarGaleria();
+  if (comparando) { actualizarComparacion(); }
+  if (typeof traducirEstaticos === "function") { traducirEstaticos(); }
+}
+
 function iniciar() {
+  datosIdioma();
   armarContrapartes();
   recalcular();
   filtrar();
@@ -1535,6 +1552,7 @@ function iniciar() {
   actualizarAviso();
   pintarMarcas();
   seguir();
+  traducirEstaticos();
 }
 
 fetch("datos/lugares.csv")
