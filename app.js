@@ -56,7 +56,7 @@ var CONFIG = {
   giroVelocidad: 0.35,
   vistaInicial: { lat: -5, lng: -75, altitude: 2.3 },
   altitudZoom: 0.3,
-  altitudSitio: 0.02,
+  altitudSitio: 0.007,
   imagenTierra: "lib/img/tierra.jpg",
   imagenRelieve: "lib/img/relieve.jpg",
   imagenCielo: "lib/img/estrellas.jpg",
@@ -108,10 +108,11 @@ var comparando = false;
 var contrapartes = [];
 var mundo2 = null;
 var mosaicoListo = false;
-var altitudMinCuerpo = 0.2;
+var ALT_MARCA = 0.001;
+var fijarSitio = false;
 
 function altitudMinima() {
-  return vista === "tierra" ? 0.015 : altitudMinCuerpo;
+  return vista === "tierra" ? 0.005 : vista === "luna" ? 0.03 : 0.016;
 }
 
 var TEXTURAS = {
@@ -539,6 +540,7 @@ function fichaCuerpoHtml(c) {
     acordeon("Por qué se parece", a.se_parece_en) +
     acordeon("Comparación de condiciones", tabla) +
     acordeon("Datos del sitio", datos) +
+    '<button class="boton" data-accion="acercar">VER ZONA ANALIZADA</button>' +
     '<button class="boton" data-accion="similitud">VER SIMILITUD CON LA TIERRA</button>';
 }
 
@@ -553,7 +555,9 @@ function fichaHtml(d) {
   }).join("");
   var datos = '<div class="datosfila"><span>Latitud</span><span>' + Number(d.lat).toFixed(2) + '</span></div>' +
     '<div class="datosfila"><span>Longitud</span><span>' + Number(d.lon).toFixed(2) + '</span></div>' +
-    '<div class="datosfila"><span>Confianza del dato</span><span>' + d.confianza + '</span></div>';
+    '<div class="datosfila"><span>Confianza del dato</span><span>' + d.confianza + '</span></div>' +
+    (d.fuente ? '<div class="datosfila"><span>Fuente</span><span>' + d.fuente + '</span></div>' : '') +
+    (d.nota ? '<p class="nota">' + d.nota + '</p>' : '');
   return '<div class="cab"><div><div class="tit">' + d.nombre + '</div><div class="meta">' + d.pais + ' · ' + d.categoria + '</div></div>' +
     '<button class="cerrar" data-accion="cerrar-ficha" aria-label="Cerrar ficha">✕</button></div>' +
     fotoHtml(d) +
@@ -681,6 +685,8 @@ function elegir(d, mover) {
   galeriaIndice = 0;
   pintarGaleria();
   mundo.controls().autoRotate = false;
+  mundo.controls().staticMoving = true;
+  fijarSitio = true;
   if (ventanaActual) { cerrarVentana(); }
   detenerZoom();
   ignorarAvisoHasta = Date.now() + (CONFIG.duracionZoom || 1500) + 300;
@@ -690,17 +696,23 @@ function elegir(d, mover) {
 }
 
 function acercar() {
-  if (!seleccionado || seleccionado.esContraparte || comparando) { return; }
+  if (!seleccionado || comparando) { return; }
+  var cuerpoSel = !!seleccionado.esContraparte;
   mundo.controls().autoRotate = false;
   detenerZoom();
   ignorarAvisoHasta = Date.now() + 2300;
-  mundo.pointOfView({ lat: seleccionado.lat, lng: seleccionado.lon, altitude: CONFIG.altitudSitio }, 2000);
-  galeriaVisible = true;
-  pintarGaleria();
+  var alt = cuerpoSel ? altitudMinima() * 1.15 : CONFIG.altitudSitio;
+  mundo.pointOfView({ lat: seleccionado.lat, lng: seleccionado.lon, altitude: alt }, 2000);
+  if (!cuerpoSel) {
+    galeriaVisible = true;
+    pintarGaleria();
+  }
 }
 
 function volver() {
   detenerZoom();
+  fijarSitio = false;
+  mundo.controls().staticMoving = false;
   if (comparando) { salirComparacion(); }
   cerrarVisor();
   var lon = seleccionado ? seleccionado.lon : CONFIG.vistaInicial.lng;
@@ -764,6 +776,12 @@ function marcarCuerpos() {
   });
 }
 
+function actualizarAviso() {
+  var t = (vista === "tierra" && !comparando) ? "DATOS NASA · PROMEDIO DEL TILE 1° × 1°" : "REFERENCIAS DE MARTE Y LUNA: DATOS DE PRUEBA";
+  var a = document.getElementById("aviso");
+  if (a.textContent !== t) { a.textContent = t; }
+}
+
 function cambiarVista(clave) {
   if (clave === vista && !comparando) { return; }
   if (comparando) { salirComparacion(); }
@@ -773,6 +791,7 @@ function cambiarVista(clave) {
   mundo.controls().minDistance = 100 * (1 + altitudMinima());
   marcarCuerpos();
   volver();
+  actualizarAviso();
 }
 
 function altitudCaber(w, h) {
@@ -845,6 +864,7 @@ function compararSimilitud() {
   mundo.controls().autoRotate = false;
   detenerZoom();
   seleccionado = a;
+  actualizarAviso();
   pintarMarcas();
   mundo.pointOfView({ lat: a.lat, lng: a.lon, altitude: altitudCaber(mundo.width(), mundo.height()) }, 1200);
   actualizarComparacion();
@@ -854,6 +874,7 @@ function salirComparacion() {
   if (!comparando) { return; }
   comparando = false;
   document.body.classList.remove("comparando", "ver-b");
+  actualizarAviso();
   if (mundo2) { mundo2.htmlElementsData([]); mundo2.pauseAnimation(); }
   document.getElementById("ficha2").classList.add("oculta");
   ajustar();
@@ -874,7 +895,7 @@ var mundo = Globe()(document.getElementById("globo"))
   .atmosphereAltitude(0.1)
   .htmlLat("lat")
   .htmlLng("lon")
-  .htmlAltitude(0.004)
+  .htmlAltitude(ALT_MARCA)
   .htmlElement(crearMarca)
   .htmlElementVisibilityModifier(function (el, visible) {
     el.style.opacity = visible ? 1 : 0;
@@ -886,7 +907,7 @@ mundo.renderer().setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
 mundo.globeMaterial().bumpScale = 3;
 mundo.controls().autoRotate = true;
 mundo.controls().autoRotateSpeed = CONFIG.giroVelocidad;
-mundo.controls().minDistance = 101.5;
+mundo.controls().minDistance = 100.5;
 mundo.controls().addEventListener("change", ajustarGiro);
 mundo.pointOfView(CONFIG.vistaInicial, 0);
 
@@ -1150,12 +1171,301 @@ function puntoVisible() {
   var cam = mundo.camera().position;
   var dentro = (cam.x * c.x + cam.y * c.y + cam.z * c.z) > (c.x * c.x + c.y * c.y + c.z * c.z) * 1.002;
   if (!dentro) { return false; }
-  var p = mundo.getScreenCoords(seleccionado.lat, seleccionado.lon, 0.004);
+  var p = mundo.getScreenCoords(seleccionado.lat, seleccionado.lon, ALT_MARCA);
   return !!p && p.x > -20 && p.x < window.innerWidth + 20 && p.y > -20 && p.y < window.innerHeight + 20;
+}
+
+
+function radioCuerpo() {
+  return vista === "marte" ? 3390 : vista === "luna" ? 1737 : radioTierra;
+}
+
+function geoRel(lat, lon, este, norte) {
+  var r = radioCuerpo(), la = lat * Math.PI / 180, lo = lon * Math.PI / 180;
+  var c = [Math.cos(la) * Math.cos(lo), Math.cos(la) * Math.sin(lo), Math.sin(la)];
+  var e = [-Math.sin(lo), Math.cos(lo), 0];
+  var n = [-Math.sin(la) * Math.cos(lo), -Math.sin(la) * Math.sin(lo), Math.cos(la)];
+  var v = [c[0] * r + e[0] * este + n[0] * norte, c[1] * r + e[1] * este + n[1] * norte, c[2] * r + e[2] * este + n[2] * norte];
+  var m = Math.sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
+  return { lat: Math.asin(v[2] / m) * 180 / Math.PI, lon: Math.atan2(v[1], v[0]) * 180 / Math.PI };
+}
+
+function pantallaRel(s, este, norte) {
+  var g = geoRel(s.lat, s.lon, este, norte);
+  var p = mundo.getScreenCoords(g.lat, g.lon, ALT_MARCA);
+  return p && p.x !== undefined ? p : null;
+}
+
+function esquina(c, a, b) {
+  function paso(o) {
+    var dx = o.x - c.x, dy = o.y - c.y, m = Math.sqrt(dx * dx + dy * dy) || 1;
+    return (c.x + dx / m * 16).toFixed(1) + "," + (c.y + dy / m * 16).toFixed(1);
+  }
+  return '<path class="d-esq" d="M' + paso(a) + ' L' + c.x.toFixed(1) + "," + c.y.toFixed(1) + ' L' + paso(b) + '"></path>';
+}
+
+function etiquetaParam(x, y, ancla, nombre, valor, abajo) {
+  var y1 = abajo ? y - 16 : y, y2 = abajo ? y : y + 16;
+  return '<text class="d-et" x="' + x.toFixed(1) + '" y="' + y1.toFixed(1) + '" text-anchor="' + ancla + '">' + nombre.toUpperCase() + '</text>' +
+    '<text class="d-val" x="' + x.toFixed(1) + '" y="' + y2.toFixed(1) + '" text-anchor="' + ancla + '">' + valor + '</text>';
+}
+
+var pruebaSobre = "";
+var tipClave = "";
+var NOMBRE_ID = { "Rover": "rover", "Hábitat": "habitat", "Paneles": "paneles", "Aterrizaje": "aterrizaje", "Perforación": "perforacion" };
+var CLAVES_PRUEBA = { rover: ["pendiente_grados", "rugosidad"], aterrizaje: ["pendiente_grados", "rugosidad"], habitat: ["temp_media_c", "insolacion"], paneles: ["insolacion", "elevacion_m"], perforacion: ["temp_media_c", "rugosidad"] };
+var TITULO_PRUEBA = { rover: "Ruta del rover", aterrizaje: "Elipse de aterrizaje", habitat: "Zona de hábitat", paneles: "Campo de paneles", perforacion: "Punto de perforación" };
+
+function puntajeDe(d, m) {
+  var ref = referenciaDe(d.referencia), perdida = 0;
+  CONFIG.variables.forEach(function (v) {
+    var dif = Math.abs(normalizar(v, d[v.campo]) - normalizar(v, ref[v.campo]));
+    perdida += m.pesos[v.campo] * Math.min(dif, 1);
+  });
+  return Math.round(100 * (1 - perdida));
+}
+
+function numEs(x) {
+  return (Math.round(x * 100) / 100).toString().replace(".", ",");
+}
+
+function tarjetaPrueba(nombre, base) {
+  var id = NOMBRE_ID[nombre];
+  var m = CONFIG.misiones.filter(function (x) { return x.id === id; })[0];
+  var ref = referenciaDe(base.referencia);
+  var pun = puntajeDe(base, m);
+  var activa = mision.id === id;
+  var filas = CLAVES_PRUEBA[id].map(function (campo) {
+    var v = CONFIG.variables.filter(function (x) { return x.campo === campo; })[0];
+    var cerca = 1 - Math.min(Math.abs(normalizar(v, base[campo]) - normalizar(v, ref[campo])), 1);
+    var clase = cerca >= 0.85 ? "a" : cerca >= 0.65 ? "b" : "c";
+    var txt = cerca >= 0.85 ? "muy parecido" : cerca >= 0.65 ? "parecido" : "distinto";
+    return '<div class="tp-fila"><span class="tp-n">' + v.nombre + '</span><b>' + numEs(base[campo]) + ' ' + v.unidad + '</b><i class="tp-' + clase + '">' + txt + '</i>' +
+      '<em>' + base.referencia + ': ' + numEs(ref[campo]) + ' ' + v.unidad + '</em></div>';
+  }).join("");
+  var todas = CONFIG.misiones.map(function (x) { return { m: x, p: puntajeDe(base, x) }; });
+  var mejor = Math.max.apply(null, todas.map(function (x) { return x.p; }));
+  var mini = todas.map(function (x) {
+    return '<div class="tp-mini' + (x.m.id === id ? " esta" : "") + (x.p === mejor ? " mejor" : "") + '"><span>' + x.m.nombre + '</span><u><s style="width:' + x.p + '%"></s></u><b>' + x.p + '</b></div>';
+  }).join("");
+  return '<div class="tp-tit">' + TITULO_PRUEBA[id] + '</div><div class="tp-uso">' + m.uso + '</div>' +
+    '<div class="tp-sec">Qué pesa más aquí</div>' + filas +
+    '<div class="tp-sec">Puntaje en ' + m.nombre + '</div><div class="tp-punt"><u><s style="width:' + pun + '%"></s></u><b>' + pun + '</b></div>' +
+    '<div class="tp-sec">Este lugar en las 5 misiones</div>' + mini +
+    '<div class="tp-clic">' + (activa ? "Misión activa" : "Clic para usar esta misión") + '</div>' +
+    '<div class="tp-nota">Ubicación ilustrativa. Referencia de ' + base.referencia + ': valores de prueba.</div>';
+}
+
+function ponerTip(x, y) {
+  var tip = document.getElementById("tip-prueba");
+  var w = tip.offsetWidth, h = tip.offsetHeight;
+  var px = x + 18, py = y + 14;
+  if (px + w > window.innerWidth - 8) { px = x - w - 18; }
+  if (py + h > window.innerHeight - 8) { py = window.innerHeight - h - 8; }
+  tip.style.left = Math.max(8, px) + "px";
+  tip.style.top = Math.max(8, py) + "px";
+}
+
+function mostrarTip(nombre, x, y, forzar) {
+  var tip = document.getElementById("tip-prueba");
+  var base = seleccionado.esContraparte ? seleccionado.analogo : seleccionado;
+  var clave = nombre + "|" + mision.id + "|" + base.id + "|" + vista;
+  if (forzar || clave !== tipClave) {
+    tip.innerHTML = tarjetaPrueba(nombre, base);
+    tipClave = clave;
+  }
+  tip.classList.remove("oculta");
+  ponerTip(x, y);
+}
+
+function ocultarTip() {
+  document.getElementById("tip-prueba").classList.add("oculta");
+  pruebaSobre = "";
+  tipClave = "";
+}
+
+function pruebaEn(x, y) {
+  var el = document.elementFromPoint(x, y);
+  var g = el && el.closest ? el.closest("[data-m]") : null;
+  return g ? g.getAttribute("data-m") : "";
+}
+
+document.addEventListener("pointermove", function (e) {
+  if (!seleccionado || comparando || e.buttons) { if (pruebaSobre) { ocultarTip(); } return; }
+  var nombre = pruebaEn(e.clientX, e.clientY);
+  if (nombre) { pruebaSobre = nombre; mostrarTip(nombre, e.clientX, e.clientY, false); }
+  else if (pruebaSobre) { ocultarTip(); }
+});
+
+var abajoX = 0, abajoY = 0, abajoPrueba = "";
+document.addEventListener("pointerdown", function (e) {
+  abajoX = e.clientX;
+  abajoY = e.clientY;
+  abajoPrueba = seleccionado && !comparando ? pruebaEn(e.clientX, e.clientY) : "";
+}, true);
+document.addEventListener("pointerup", function (e) {
+  if (!abajoPrueba || !seleccionado || comparando) { abajoPrueba = ""; return; }
+  var inicio = abajoPrueba;
+  abajoPrueba = "";
+  if (Math.abs(e.clientX - abajoX) > 6 || Math.abs(e.clientY - abajoY) > 6) { return; }
+  if (pruebaEn(e.clientX, e.clientY) !== inicio) { return; }
+  cambiarMision(NOMBRE_ID[inicio]);
+  pruebaSobre = inicio;
+  mostrarTip(inicio, e.clientX, e.clientY, true);
+});
+
+function puntosRel(s, lista) {
+  var out = [];
+  for (var i = 0; i < lista.length; i++) {
+    var q = pantallaRel(s, lista[i][0], lista[i][1]);
+    if (!q) { return null; }
+    out.push(q);
+  }
+  return out;
+}
+
+function trazoRel(s, lista, cerrar) {
+  var q = puntosRel(s, lista);
+  if (!q) { return ""; }
+  return "M" + q.map(function (p) { return p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" L") + (cerrar ? " Z" : "");
+}
+
+function elipseLista(e0, n0, a, b, giro) {
+  var lista = [], g = giro * Math.PI / 180;
+  for (var i = 0; i < 48; i++) {
+    var t = i / 48 * 2 * Math.PI, x = a * Math.cos(t), y = b * Math.sin(t);
+    lista.push([e0 + x * Math.cos(g) - y * Math.sin(g), n0 + x * Math.sin(g) + y * Math.cos(g)]);
+  }
+  return lista;
+}
+
+function textoPrueba(s, e, n, ancla, txt, activa) {
+  var q = pantallaRel(s, e, n);
+  if (!q) { return ""; }
+  return '<text class="d-pt' + (activa ? " act" : "") + '" x="' + q.x.toFixed(1) + '" y="' + q.y.toFixed(1) + '" text-anchor="' + ancla + '">' + txt + '</text>';
+}
+
+function zonasPrueba(s, base, ancho, pxkm) {
+  if (!base || !base.probar || ancho < 170) { return ""; }
+  var lista = base.probar.split(", "), activa = mision && mision.nombre, out = "", conTexto = ancho >= 320;
+  lista.forEach(function (nombre) {
+    var on = nombre === activa, c = "d-prueba" + (on ? " act" : "") + (nombre === pruebaSobre ? " hov" : ""), g = "";
+    if (nombre === "Aterrizaje") {
+      g += '<path class="' + c + '" d="' + trazoRel(s, elipseLista(-4.6, 3.2, 2.8, 1.5, 25), true) + '"></path>';
+      var k = pantallaRel(s, -4.6, 3.2);
+      if (k) { g += '<path class="d-cruz' + (on ? " act" : "") + '" d="M' + (k.x - 5) + "," + k.y + " L" + (k.x + 5) + "," + k.y + " M" + k.x + "," + (k.y - 5) + " L" + k.x + "," + (k.y + 5) + '"></path>'; }
+      if (conTexto) { g += textoPrueba(s, -4.6, 0.9, "middle", "ELIPSE DE ATERRIZAJE", on); }
+    }
+    if (nombre === "Rover") {
+      var ruta = [[1.2, 1.2], [2.4, 2.8], [3.8, 2.3], [5.0, 4.0], [6.4, 3.6]];
+      g += '<path class="d-hitruta" d="' + trazoRel(s, ruta, false) + '"></path>';
+      g += '<path class="' + c + ' ruta" d="' + trazoRel(s, ruta, false) + '"></path>';
+      var a0 = pantallaRel(s, 1.2, 1.2), a1 = pantallaRel(s, 6.4, 3.6);
+      if (a0) { g += '<circle class="d-punto' + (on ? " act" : "") + '" cx="' + a0.x.toFixed(1) + '" cy="' + a0.y.toFixed(1) + '" r="3"></circle>'; }
+      if (a1) { g += '<g class="d-icono' + (on ? " act" : "") + '" transform="translate(' + a1.x.toFixed(1) + "," + a1.y.toFixed(1) + ')"><rect x="-8" y="-6" width="16" height="7" rx="1.5"></rect><circle cx="-5" cy="4" r="2.6"></circle><circle cx="5" cy="4" r="2.6"></circle><path d="M2,-6 L5,-11 L9,-11"></path></g>'; }
+      if (conTexto) { g += textoPrueba(s, 3.6, 5.2, "middle", "RUTA DEL ROVER", on); }
+    }
+    if (nombre === "Hábitat") {
+      var h = pantallaRel(s, -3.2, -2.6), rh = 1 * pxkm;
+      if (h) {
+        g += '<circle class="' + c + '" cx="' + h.x.toFixed(1) + '" cy="' + h.y.toFixed(1) + '" r="' + rh.toFixed(1) + '"></circle>';
+        g += '<path class="d-icono' + (on ? " act" : "") + '" d="M' + (h.x - 7) + "," + (h.y + 4) + " A7,7 0 0 1 " + (h.x + 7) + "," + (h.y + 4) + " Z M" + (h.x - 11) + "," + (h.y + 4) + " L" + (h.x + 11) + "," + (h.y + 4) + '"></path>';
+      }
+      if (conTexto) { g += textoPrueba(s, -3.2, -4.3, "middle", "ZONA DE HÁBITAT", on); }
+    }
+    if (nombre === "Paneles") {
+      var caja = [[2.6, -2.8], [5.8, -2.8], [5.8, -4.4], [2.6, -4.4]];
+      g += '<path class="' + c + '" d="' + trazoRel(s, caja, true) + '"></path>';
+      var rej = "";
+      [3.67, 4.73].forEach(function (e) { rej += trazoRel(s, [[e, -2.8], [e, -4.4]], false); });
+      rej += trazoRel(s, [[2.6, -3.6], [5.8, -3.6]], false);
+      g += '<path class="d-rejilla' + (on ? " act" : "") + '" d="' + rej + '"></path>';
+      if (conTexto) { g += textoPrueba(s, 4.2, -2.2, "middle", "CAMPO DE PANELES", on); }
+    }
+    if (nombre === "Perforación") {
+      var pf = pantallaRel(s, 0.8, -5.2);
+      if (pf) {
+        g += '<circle class="' + c + '" cx="' + pf.x.toFixed(1) + '" cy="' + pf.y.toFixed(1) + '" r="' + (0.5 * pxkm).toFixed(1) + '"></circle>';
+        g += '<circle class="' + c + '" cx="' + pf.x.toFixed(1) + '" cy="' + pf.y.toFixed(1) + '" r="' + (0.22 * pxkm).toFixed(1) + '"></circle>';
+        g += '<path class="d-cruz' + (on ? " act" : "") + '" d="M' + (pf.x - 7) + "," + pf.y + " L" + (pf.x + 7) + "," + pf.y + " M" + pf.x + "," + (pf.y - 7) + " L" + pf.x + "," + (pf.y + 7) + '"></path>';
+      }
+      if (conTexto) { g += textoPrueba(s, 1.6, -5.35, "start", "PUNTO DE PERFORACIÓN", on); }
+    }
+    out += '<g class="d-hit" data-m="' + nombre + '">' + g + '</g>';
+  });
+  return out;
+}
+
+function dibujarDetalle() {
+  var svg = document.getElementById("detalle");
+  if (!seleccionado || comparando || !puntoVisible()) { if (svg.innerHTML) { svg.innerHTML = ""; } return; }
+  var s = seleccionado;
+  var nw = pantallaRel(s, -10, 10), ne = pantallaRel(s, 10, 10), se = pantallaRel(s, 10, -10), sw = pantallaRel(s, -10, -10);
+  var cen = pantallaRel(s, 0, 0), nor = pantallaRel(s, 0, 1);
+  if (!nw || !ne || !se || !sw || !cen || !nor) { svg.innerHTML = ""; return; }
+  var ancho = Math.sqrt(Math.pow(ne.x - nw.x, 2) + Math.pow(ne.y - nw.y, 2));
+  var op = Math.max(0, Math.min(1, (ancho - 110) / 90));
+  if (op <= 0) { if (svg.innerHTML) { svg.innerHTML = ""; } return; }
+  var pxkm = ancho / 20;
+  var partes = "";
+  var anillos = [1, 5, 10];
+  anillos.forEach(function (km) {
+    var r = km * pxkm;
+    if (r < 22) { return; }
+    var d = "";
+    for (var i = 0; i < 72; i++) {
+      var a = i / 72 * 2 * Math.PI;
+      var q = pantallaRel(s, km * Math.cos(a), km * Math.sin(a));
+      if (!q) { return; }
+      d += (i ? "L" : "M") + q.x.toFixed(1) + "," + q.y.toFixed(1);
+    }
+    partes += '<path class="d-anillo" d="' + d + 'Z"></path>';
+    var e = pantallaRel(s, km, 0);
+    if (e) { partes += '<text class="d-anillo-t" x="' + (e.x + 6).toFixed(1) + '" y="' + (e.y - 5).toFixed(1) + '">' + km + ' km</text>'; }
+  });
+  partes += '<polygon class="d-caja" points="' + [nw, ne, se, sw].map(function (p) { return p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ") + '"></polygon>';
+  partes += esquina(nw, ne, sw) + esquina(ne, nw, se) + esquina(se, ne, sw) + esquina(sw, nw, se);
+  var enCuerpo = !!s.esContraparte;
+  var base = enCuerpo ? s.analogo : s;
+  partes += zonasPrueba(s, base, ancho, pxkm);
+  var tipo = mision && base.probar && base.probar.split(", ").indexOf(mision.nombre) >= 0 ? "PRUEBA ACTIVA · " + mision.nombre.toUpperCase() : "SE PUEDE PROBAR: " + (base.probar || "").toUpperCase().replace(/, /g, " · ");
+  partes += '<text class="d-sub der" x="' + ne.x.toFixed(1) + '" y="' + (ne.y - 10).toFixed(1) + '" text-anchor="end">' + tipo + '</text>';
+  partes += '<text class="d-sub" x="' + sw.x.toFixed(1) + '" y="' + (sw.y + 16).toFixed(1) + '">UBICACIÓN ILUSTRATIVA DE LAS PRUEBAS</text>';
+  partes += '<text class="d-tit" x="' + nw.x.toFixed(1) + '" y="' + (nw.y - 10).toFixed(1) + '">ZONA ANALIZADA · 20 × 20 km</text>';
+  if (enCuerpo) { partes += '<text class="d-sub" x="' + nw.x.toFixed(1) + '" y="' + (nw.y - 24).toFixed(1) + '">REFERENCIA DE ' + s.referencia.toUpperCase() + ' · VALORES DE PRUEBA</text>'; }
+  if (ancho >= 250 && base.partes) {
+    var vals = base.partes.map(function (p) { return { n: p.v.nombre, t: (enCuerpo ? p.ref : p.valor) + " " + p.v.unidad }; });
+    partes += etiquetaParam(nw.x + 14, nw.y + 24, "start", vals[0].n, vals[0].t, false);
+    partes += etiquetaParam(ne.x - 14, ne.y + 24, "end", vals[1].n, vals[1].t, false);
+    partes += etiquetaParam(sw.x + 14, sw.y - 14, "start", vals[2].n, vals[2].t, true);
+    partes += etiquetaParam(se.x - 14, se.y - 14, "end", vals[3].n, vals[3].t, true);
+    if (ancho >= 330) { partes += etiquetaParam((sw.x + se.x) / 2, (sw.y + se.y) / 2 - 14, "middle", vals[4].n, vals[4].t, true); }
+  }
+  var cont = document.getElementById("globo");
+  var gw = cont.clientWidth, gh = cont.clientHeight;
+  var opciones = [0.5, 1, 2, 5, 10, 20, 50, 100, 200], km = opciones[0];
+  opciones.forEach(function (o) { if (o * pxkm <= 150) { km = o; } });
+  var largo = km * pxkm, x2 = gw - 28, x1 = x2 - largo, yb = gh - 44;
+  partes += '<path class="d-escala" d="M' + x1.toFixed(1) + "," + (yb - 6) + " L" + x1.toFixed(1) + "," + yb + " L" + x2.toFixed(1) + "," + yb + " L" + x2.toFixed(1) + "," + (yb - 6) + '"></path>';
+  partes += '<text class="d-anillo-t" x="' + ((x1 + x2) / 2).toFixed(1) + '" y="' + (yb - 11) + '" text-anchor="middle">' + km + ' km</text>';
+  var ang = Math.atan2(nor.x - cen.x, -(nor.y - cen.y)) * 180 / Math.PI;
+  partes += '<g transform="translate(' + (x1 - 30).toFixed(1) + ',' + (yb - 8) + ') rotate(' + ang.toFixed(1) + ')"><path class="d-norte" d="M0,-15 L6,7 L0,3 L-6,7 Z"></path></g>';
+  partes += '<text class="d-anillo-t" x="' + (x1 - 30).toFixed(1) + '" y="' + (yb + 14) + '" text-anchor="middle">N</text>';
+  svg.innerHTML = '<g opacity="' + op.toFixed(2) + '">' + partes + '</g>';
+}
+
+function mantenerCentro() {
+  if (!fijarSitio || !seleccionado || comparando || Date.now() < ignorarAvisoHasta) { return; }
+  var v = mundo.pointOfView();
+  if (Math.abs(v.lat - seleccionado.lat) > 0.00002 || Math.abs(v.lng - seleccionado.lon) > 0.00002) {
+    mundo.pointOfView({ lat: seleccionado.lat, lng: seleccionado.lon, altitude: v.altitude }, 0);
+  }
 }
 
 function seguir() {
   actualizarBajar();
+  mantenerCentro();
+  dibujarDetalle();
   var trazo = document.getElementById("trazo");
   var ancla = document.getElementById("ancla");
   var ficha = document.getElementById("ficha");
@@ -1163,7 +1473,7 @@ function seguir() {
   var visible = !seleccionado || comparando || Date.now() < ignorarAvisoHasta || puntoVisible();
   aviso.classList.toggle("oculta", visible);
   if (seleccionado && visible && !comparando && !ficha.classList.contains("oculta")) {
-    var p = mundo.getScreenCoords(seleccionado.lat, seleccionado.lon, 0.004);
+    var p = mundo.getScreenCoords(seleccionado.lat, seleccionado.lon, ALT_MARCA);
     if (p && p.x !== undefined) {
       var x = p.x, y = p.y;
       var xf = window.innerWidth - 28 - ficha.offsetWidth, yf = 84 + 36;
@@ -1222,6 +1532,7 @@ function iniciar() {
   etiquetaObjetivo();
   iconoRotacion();
   marcarCuerpos();
+  actualizarAviso();
   pintarMarcas();
   seguir();
 }
@@ -1231,4 +1542,4 @@ fetch("datos/lugares.csv")
   .then(function (t) { var datos = leerCsv(t); if (datos.length) { todos = datos; } iniciar(); })
   .catch(function () { iniciar(); });
 
-document.getElementById("globo").addEventListener("pointerdown", detenerZoom);
+document.getElementById("globo").addEventListener("pointerdown", function () { detenerZoom(); fijarSitio = false; });
